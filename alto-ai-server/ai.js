@@ -11,14 +11,16 @@ export async function getAIRequest(req, res) {
   const prompt = req.query.prompt
   try {
     const playlist = await generatePlaylist(prompt);
-    res.json({ playlist });
+    console.log("Generated playlist:", playlist);
+    console.log(Array.isArray(playlist)); // true
+    res.json({playlist});
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 }
 
-async function generatePlaylist(prompt) {
+export async function generatePlaylist(prompt) {
   const response = await client.chat.completions.create({
     model: "openai/gpt-oss-20b:nebius",
     messages: [

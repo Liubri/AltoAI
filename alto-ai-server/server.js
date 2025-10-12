@@ -1,20 +1,47 @@
-import express from 'express'
-import cors from 'cors'
-import { getAIRequest } from './ai.js'
-import dotenv from "dotenv"
+import express from "express";
+import cors from "cors";
+import { getAIRequest, generatePlaylist } from "./ai.js";
+import dotenv from "dotenv";
+import { spotifyCallback, spotifyLogin, getAccessToken } from "./spotifyAuth.js";
+import { addAllSongsToPlaylist } from "./spotify.js";
 
-dotenv.config()
+dotenv.config();
 const app = express();
 app.use(cors()); // allow frontend requests
 app.use(express.json());
 
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from Node.js!' });
+app.get("/api/hello", (req, res) => {
+  res.json({ message: "Hello from Node.js!" });
+});
+const songs = [
+  { title: "怪物", artist: "YOASOBI" },
+  { title: "Idol", artist: "YOASOBI" },
+  { title: "群青", artist: "YOASOBI" },
+  { title: "夜に駆ける", artist: "YOASOBI" },
+];
+app.get("/createPlaylist", async (req, res) => {
+  try {
+    //const prompt = req.query.prompt;
+    //const playlist = await generatePlaylist(prompt);
+
+    //console.log("🎵 Generated playlist for Spotify:", playlist);
+
+    await addAllSongsToPlaylist(songs);
+
+    res.status(200).send("✅ Playlist created and songs added!");
+  } catch (err) {
+    console.error("Error in /createPlaylist:", err);
+    res.status(500).send("❌ Failed to create playlist.");
+  }
 });
 
-app.get('/api/openai', getAIRequest);
+app.get("/api/openai", getAIRequest);
 
-const PORT = 3000;
+app.get("/spotify/login", spotifyLogin);
+
+app.get("/callback", spotifyCallback);
+
+const PORT = 3000
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://127.0.0.1:${PORT}`);
 });
