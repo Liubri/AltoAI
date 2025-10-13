@@ -3,18 +3,41 @@ import pLimit from "p-limit";
 import { getAccessToken } from "./spotifyAuth.js";
 
 async function searchTrack(song, artist, token) {
-  const query = encodeURIComponent(`${song} ${artist}`);
-  const res = await axios.get(
-    `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`,
-    { headers: { Authorization: `Bearer ${token}` } }
+  try {
+    const query = encodeURIComponent(`${song} ${artist}`);
+    const res = await axios.get(
+      `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    //Get the first track in search results
+    const track = res.data.tracks.items[0];
+    if (!track) return null; // no results
+    return {
+      title: track.name,
+      artist: track.artists.map((a) => a.name).join(", "),
+      album: track.album.name,
+      uri: track.uri, // "spotify:track:xxxx"
+      id: track.id,
+      image: track.album.images?.[0]?.url || null,
+    };
+  } catch (err) {
+    console.log(`No match for ${song} by ${artist}`);
+    return [];
+  }
+}
+
+async function addTrackToArray(playlist, token) {
+  const limit = pLimit(5); // max 5 concurrent searches
+  const searchPromises = playlist.map((item) =>
+    limit(() => searchTrack(item.title, item.artist, token))
   );
 
-  if (res.data.tracks.items.length > 0) {
-    return res.data.tracks.items[0].uri; // e.g. "spotify:track:6habFhsOp2NvshLv26DqMb"
-  } else {
-    console.log(`No match for ${song} by ${artist}`);
-    return null;
-  }
+  // wait for all results
+  const results = await Promise.all(searchPromises);
+
+  // filter out nulls (failed searches)
+  const validTracks = results.filter((track) => track !== null);
+  return validTracks;
 }
 
 async function createPlaylist(userId, name, token) {
@@ -32,7 +55,7 @@ async function createPlaylist(userId, name, token) {
   return res.data.id; // Returns the new playlist ID
 }
 
-async function addOneTracksToPlaylist(trackURIs, token) {
+async function addAllTracksToPlaylist(trackURIs, token) {
   try {
     // Step 1: get current user profile to find userId
     const userRes = await axios.get("https://api.spotify.com/v1/me", {
@@ -43,7 +66,7 @@ async function addOneTracksToPlaylist(trackURIs, token) {
     // Step 2: create a new playlist
     const playlistId = await createPlaylist(userId, "Alto-AI", token);
 
-    // Step 3: add tracks
+    // Step 3: add all tracks from array
     const addRes = await axios.post(
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
       { uris: trackURIs },
@@ -59,30 +82,18 @@ async function addOneTracksToPlaylist(trackURIs, token) {
   }
 }
 
-export async function addAllSongsToPlaylist(playlist) {
+export async function checkValidSongs(playlist) {
   if (!global.SPOTIFY_REFRESH_TOKEN) {
     console.log("No refresh token available. Login first!");
     return;
   }
   const token = await getAccessToken(global.SPOTIFY_REFRESH_TOKEN);
-  const songs = playlist;
-  console.log("Playlist: ", songs);
-  const limit = pLimit(5); // max 5 concurrent searches
-  // const trackURIs = [];
-  // for (const item of songs) {
-  //   const uri = await searchTrack(item["title"], item.artist, token);
-  //   if (uri) trackURIs.push(uri);
-  // }
-  const searchPromises = playlist.map((item) =>
-    limit(() => searchTrack(item.title, item.artist, token))
-  );
-  // Wait for all searches, filtering out nulls
-  const trackURIs = (await Promise.all(searchPromises)).filter(
-    (uri) => uri !== null
-  );
-  if (trackURIs.length > 0) {
-    await addOneTracksToPlaylist(trackURIs, token);
+
+  const tracks = await addTrackToArray(playlist, token);
+  if (tracks.length > 0) {
+    const trackURIs = tracks.map((track) => track.uri);
+    await addAllTracksToPlaylist(trackURIs, token);
   } else {
-    console.log("No valid tracks found.");
+    console.log("⚠️ No valid tracks found.");
   }
 }

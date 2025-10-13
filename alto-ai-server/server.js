@@ -3,7 +3,7 @@ import cors from "cors";
 import { getAIRequest, generatePlaylist } from "./ai.js";
 import dotenv from "dotenv";
 import { spotifyCallback, spotifyLogin, getAccessToken } from "./spotifyAuth.js";
-import { addAllSongsToPlaylist } from "./spotify.js";
+import { checkValidSongs } from "./spotify.js";
 
 dotenv.config();
 const app = express();
@@ -15,18 +15,18 @@ app.get("/api/hello", (req, res) => {
 });
 const songs = [
   { title: "怪物", artist: "YOASOBI" },
-  { title: "Idol", artist: "YOASOBI" },
+  { title: "アイドル", artist: "YOASOBI" },
   { title: "群青", artist: "YOASOBI" },
   { title: "夜に駆ける", artist: "YOASOBI" },
+  { title: "告白氣球", artist: "" },
 ];
-app.get("/createPlaylist", async (req, res) => {
+app.get("/spotify/createPlaylist", async (req, res) => {
   try {
     //const prompt = req.query.prompt;
     //const playlist = await generatePlaylist(prompt);
-
     //console.log("🎵 Generated playlist for Spotify:", playlist);
 
-    await addAllSongsToPlaylist(songs);
+    await checkValidSongs(songs);
 
     res.status(200).send("✅ Playlist created and songs added!");
   } catch (err) {
