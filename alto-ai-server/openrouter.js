@@ -22,9 +22,15 @@ export async function getAIRequest(req, res) {
 
 export async function generatePlaylist(prompt) {
   const response = await client.chat.completions.create({
-    model: "deepseek/deepseek-chat-v3.1:free",
+    model: "mistralai/mistral-7b-instruct:free",
     messages: [
-      { role: "system", content: "You are a music recommendation assistant." },
+      { role: "system", content: `You are a music recommendation assistant.
+        When the user requests songs from a specific language or country, you must write the song and artist names in that language's native script.
+For example:
+- If the user asks for Chinese songs → use Chinese titles.
+- If the user asks for Japanese songs → use Japanese titles.
+- If the user asks for Korean songs → use Hangul.
+Do not include any explanations or text, or markdown.` },
       {
         role: "user",
         content: `Generate a playlist of 10 songs for: ${prompt}
@@ -32,7 +38,7 @@ export async function generatePlaylist(prompt) {
       [
      { "title": "Song Name", "artist": "Artist Name" }
     ]
-    Do not include any explanations or text, or markdown.`,
+    `,
       },
     ],
     temperature: 0.7,
