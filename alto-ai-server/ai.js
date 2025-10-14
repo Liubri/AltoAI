@@ -24,7 +24,7 @@ export async function generatePlaylist(prompt) {
   const response = await client.chat.completions.create({
     model: "openai/gpt-oss-20b:nebius",
     messages: [
-      { role: "system", content: "You are a music recommendation assistant." },
+      { role: "system", content: "You are a multilingual music recommendation assistant." },
       { role: "user", content: `Generate a playlist of 10 songs for: ${prompt}
       Return **ONLY** a JSON array in this exact format:
       [

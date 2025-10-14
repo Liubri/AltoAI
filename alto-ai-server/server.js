@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { getAIRequest, generatePlaylist } from "./ai.js";
+import { getAIRequest, generatePlaylist } from "./openrouter.js";
 import dotenv from "dotenv";
 import { spotifyCallback, spotifyLogin, getAccessToken } from "./spotifyAuth.js";
 import { checkValidSongs } from "./spotify.js";
@@ -13,20 +13,20 @@ app.use(express.json());
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from Node.js!" });
 });
-const songs = [
-  { title: "怪物", artist: "YOASOBI" },
-  { title: "アイドル", artist: "YOASOBI" },
-  { title: "群青", artist: "YOASOBI" },
-  { title: "夜に駆ける", artist: "YOASOBI" },
-  { title: "告白氣球", artist: "" },
-];
+// const songs = [
+//   { title: "怪物", artist: "YOASOBI" },
+//   { title: "アイドル", artist: "YOASOBI" },
+//   { title: "群青", artist: "YOASOBI" },
+//   { title: "夜に駆ける", artist: "YOASOBI" },
+//   { title: "告白氣球", artist: "" },
+// ];
 app.get("/spotify/createPlaylist", async (req, res) => {
   try {
-    //const prompt = req.query.prompt;
-    //const playlist = await generatePlaylist(prompt);
-    //console.log("🎵 Generated playlist for Spotify:", playlist);
+    const prompt = req.query.prompt;
+    const playlist = await generatePlaylist(prompt);
+    console.log("🎵 Generated playlist for Spotify:", playlist);
 
-    await checkValidSongs(songs);
+    await checkValidSongs(playlist);
 
     res.status(200).send("✅ Playlist created and songs added!");
   } catch (err) {
