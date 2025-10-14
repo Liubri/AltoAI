@@ -34,7 +34,7 @@ Do not include any explanations or text, or markdown.` },
       {
         role: "user",
         content: `Generate a playlist of 10 songs for: ${prompt}
-      Return **ONLY** a JSON array in this exact format:
+      Return **ONLY ONE** JSON array in this exact format:
       [
      { "title": "Song Name", "artist": "Artist Name" }
     ]

@@ -1,12 +1,13 @@
-import axios from "axios";
+import spotifyAxios from "./spotifyAxios.js";
 import pLimit from "p-limit";
 import { getAccessToken } from "./spotifyAuth.js";
 
 async function searchTrack(song, artist, token) {
   try {
     const query = encodeURIComponent(`${song} ${artist}`);
-    const res = await axios.get(
-      `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`,
+    console.log(`Searching for: ${song} by ${artist}`);
+    const res = await spotifyAxios.get(
+      `/v1/search?q=${query}&type=track&limit=1`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     //Get the first track in search results
@@ -41,8 +42,8 @@ async function addTrackToArray(playlist, token) {
 }
 
 async function createPlaylist(userId, name, token) {
-  const res = await axios.post(
-    `https://api.spotify.com/v1/users/${userId}/playlists`,
+  const res = await spotifyAxios.post(
+    `/v1/users/${userId}/playlists`,
     {
       name: name, // Playlist name
       public: false, // true = public, false = private
@@ -58,7 +59,7 @@ async function createPlaylist(userId, name, token) {
 async function addAllTracksToPlaylist(trackURIs, token) {
   try {
     // Step 1: get current user profile to find userId
-    const userRes = await axios.get("https://api.spotify.com/v1/me", {
+    const userRes = await spotifyAxios.get("/v1/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
     const userId = userRes.data.id;
@@ -67,8 +68,8 @@ async function addAllTracksToPlaylist(trackURIs, token) {
     const playlistId = await createPlaylist(userId, "Alto-AI", token);
 
     // Step 3: add all tracks from array
-    const addRes = await axios.post(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    const addRes = await spotifyAxios.post(
+      `/v1/playlists/${playlistId}/tracks`,
       { uris: trackURIs },
       { headers: { Authorization: `Bearer ${token}` } }
     );

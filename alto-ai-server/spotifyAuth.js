@@ -1,3 +1,4 @@
+import spotifyApi from "./spotifyAxios.js";
 import axios from "axios";
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
@@ -39,6 +40,8 @@ export async function spotifyCallback(req, res) {
       }
     );
 
+    console.log("Token response data:",  "Basic " + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString("base64"),); // Debug log
+
     const { access_token, refresh_token } = tokenResponse.data;
     global.SPOTIFY_REFRESH_TOKEN = refresh_token;
 
@@ -46,7 +49,7 @@ export async function spotifyCallback(req, res) {
     //console.log("Refresh token:", refresh_token);
 
     // Get user profile
-    const userRes = await axios.get("https://api.spotify.com/v1/me", {
+    const userRes = await spotifyApi.get("/v1/me", {
       headers: { Authorization: `Bearer ${access_token}` },
     });
 
