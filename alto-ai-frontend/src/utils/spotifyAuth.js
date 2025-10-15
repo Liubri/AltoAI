@@ -1,11 +1,10 @@
-import spotifyApi from "./spotifyAxios.js";
 import axios from "axios";
-const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
-const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
+import { setToken } from "../redux/spotifySlice";
+const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
 
 // Step 1 — Redirect to Spotify login
-export function spotifyLogin(req, res) {
+export function spotifyLogin() {
   const scope = "playlist-modify-public playlist-modify-private";
   const authUrl =
     "https://accounts.spotify.com/authorize?" +
@@ -13,23 +12,23 @@ export function spotifyLogin(req, res) {
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,
       scope: scope,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: "http://127.0.0.1:5173/callback",
     });
-
-  res.redirect(authUrl);
+  console.log("WindowHREF:", window.location.origin);
+  window.location.href = authUrl
 }
 // Step 2 — Handle Spotify callback
-export async function spotifyCallback(req, res) {
-  const code = req.query.code;
-  if (!code) return res.status(400).send("No code received");
-
+export async function spotifyCallback(code) {
+  if (!code) {
+    spotifyLogin()
+  }
   try {
     const tokenResponse = await axios.post(
       "https://accounts.spotify.com/api/token",
       new URLSearchParams({
         grant_type: "authorization_code",
         code,
-        redirect_uri: REDIRECT_URI,
+        redirect_uri: "http://127.0.0.1:5173/callback",
       }),
       {
         headers: {
@@ -39,26 +38,25 @@ export async function spotifyCallback(req, res) {
         },
       }
     );
-
+    console.log("Callback: ", window.location.origin + "/callback");
     console.log("Token response data:",  "Basic " + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString("base64"),); // Debug log
 
     const { access_token, refresh_token } = tokenResponse.data;
-    global.SPOTIFY_REFRESH_TOKEN = refresh_token;
-
+    return refresh_token
+    
     //console.log("Access token:", access_token);
     //console.log("Refresh token:", refresh_token);
 
     // Get user profile
-    const userRes = await spotifyApi.get("/v1/me", {
-      headers: { Authorization: `Bearer ${access_token}` },
-    });
+    // const userRes = await spotifyApi.get("/v1/me", {
+    //   headers: { Authorization: `Bearer ${access_token}` },
+    // });
 
-    console.log("Logged in user:", userRes.data.display_name);
+    // console.log("Logged in user:", userRes.data.display_name);
 
-    res.send("✅ Login successful! Check console for tokens and user info.");
+    console.log("✅ Login successful! Check console for tokens and user info.");
   } catch (err) {
     console.error(err.response?.data || err.message);
-    res.status(500).send("Error during Spotify callback");
   }
 }
 
