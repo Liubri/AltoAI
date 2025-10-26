@@ -1,11 +1,15 @@
 import axios from 'axios';
+import store from '../redux/store';
 
 const url = import.meta.env.VITE_BACKEND_BASE_URL
 const api = axios.create({
   baseURL: url, 
 });
 
+
 api.interceptors.request.use((config) => {
+  const token = store.getState().auth.token;
+  config.headers.Authorization = `Bearer ${token}`;
   return config;
 }, (error) => {
   (error);

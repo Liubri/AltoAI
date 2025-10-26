@@ -1,27 +1,38 @@
-import { useState } from "react"
-import api from "../utils/api.js"
-export default function SearchBar() {
-    const [input, setInput] = useState("")
+import { useState } from "react";
+import api from "../utils/api.js";
+export default function SearchBar(setSongs) {
+  const [input, setInput] = useState("");
 
+  function handleChange(e) {
+    setInput(e.target.value);
+  }
 
-    function handleChange(e) {
-        setInput(e.target.value)
+  async function sendInput() {
+    const req = await api.post("/spotify/createPlaylist", { prompt: input });
+    console.log("Response data:", req.data);
+    setSongs(req.data);
+  }
+
+  const handleEnter = (e) => {
+    if (e.key === "Enter") {
+      sendInput();
     }
+  };
 
-    async function sendInput() {
-        await api.post("/spotify/login")
-    }
-    
-    const handleEnter = (e) => {
-        if (e.key === "Enter") {
-        sendInput()
-        }
-    }
-
-    console.log(input);
-    return (
-        <div>
-            <input onChange={handleChange} onKeyDown={handleEnter}/>
+  return (
+    <div className="w-[700px]">
+      <div className="bg-sky-600 backdrop-blur-sm flex flex-col gap-4 rounded-xl p-6">
+        <p className="text-left">Describe your perfect playlist</p>
+        <div className="flex gap-3">
+        <input
+          placeholder=" Type your prompt"
+          className="flex-grow border-2 border-red-500 rounded-lg px-3 py-2"
+          onChange={handleChange}
+          onKeyDown={handleEnter}
+        />
+        <button onClick={sendInput}>Generate playlist</button>
         </div>
-    )
+      </div>
+    </div>
+  );
 }

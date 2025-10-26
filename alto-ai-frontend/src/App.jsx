@@ -1,18 +1,15 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
+import StartPage from "./pages/StartPage";
 import MainPage from "./pages/MainPage";
 import { Routes, Route } from "react-router-dom";
-import SpotifyCallBack from "./pages/SpotifyCallback";
+import Login from "./pages/Login";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <Routes>
-      <Route path="/" element={<MainPage />} />
-      <Route path="/callback" element={<SpotifyCallBack/>} />
+      <Route path="/" element={<StartPage />} />
+      <Route path="/ai" element={<MainPage />} />
+      <Route path="/login" element={<Login />} />
     </Routes>
   );
 }

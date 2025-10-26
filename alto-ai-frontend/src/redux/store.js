@@ -1,15 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-import spotifyReducer from './spotifySlice';
+import authReducer from './authSlice';
 import { CookieStorage } from 'redux-persist-cookie-storage'
 import Cookies from 'cookies-js'
 
-const spotifyConfig = {
-  key: 'spotify',
+const authConfig = {
+  key: 'auth',
   storage: new CookieStorage(Cookies, {
     expiration: {
-      default: 60 * 60 * 1000, // 1 hour expiration
+      default: 30 * 24 * 60 * 60 * 1000,
     },
     setCookieOptions: {
       path: "/",
@@ -21,7 +21,7 @@ const spotifyConfig = {
 
 export const store = configureStore({
   reducer: {
-    spotify: persistReducer(spotifyConfig, spotifyReducer),
+    auth: persistReducer(authConfig, authReducer),
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -33,3 +33,4 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+export default store;

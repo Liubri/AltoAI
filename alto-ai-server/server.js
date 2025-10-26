@@ -2,13 +2,17 @@ import express from "express";
 import cors from "cors";
 import { getAIRequest, generatePlaylist } from "./openrouter.js";
 import dotenv from "dotenv";
-import { spotifyCallback, spotifyLogin, getAccessToken } from "./spotifyAuth.js";
-import { checkValidSongs } from "./spotify.js";
+import { spotifyCallback, spotifyLogin, requireAuth } from "./spotify/spotifyAuth.js";
+import { checkValidSongs } from "./spotify/spotify.js";
+import connectDB from "./models/db.js";
+import {createPlaylistRoute} from "./spotify/routes.js";
 
 dotenv.config();
 const app = express();
 app.use(cors()); // allow frontend requests
 app.use(express.json());
+
+connectDB(process.env.MONGO_URI);
 
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from Node.js!" });
@@ -20,22 +24,9 @@ app.get("/api/hello", (req, res) => {
 //   { title: "夜に駆ける", artist: "YOASOBI" },
 //   { title: "告白氣球", artist: "" },
 // ];
-app.get("/spotify/createPlaylist", async (req, res) => {
-  try {
-    const prompt = req.query.prompt;
-    const playlist = await generatePlaylist(prompt);
-    console.log("🎵 Generated playlist for Spotify:", playlist);
+app.post("/spotify/createPlaylist", requireAuth(createPlaylistRoute));
 
-    await checkValidSongs(playlist);
-
-    res.status(200).send("✅ Playlist created and songs added!");
-  } catch (err) {
-    console.error("Error in /createPlaylist:", err);
-    res.status(500).send("❌ Failed to create playlist.");
-  }
-});
-
-app.get("/api/openai", getAIRequest);
+app.get("/api/openai", requireAuth(getAIRequest));
 
 app.get("/spotify/login", spotifyLogin);
 

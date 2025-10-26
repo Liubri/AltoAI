@@ -15,7 +15,7 @@ spotifyApi.interceptors.request.use((config) => {
 spotifyApi.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("Spotify API error:", error.response?.data || error.message);
+    // console.error("Spotify API error:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );

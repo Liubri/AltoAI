@@ -7,7 +7,7 @@ const client = new OpenAI({
 	apiKey: process.env.HF_TOKEN,
 });
 
-export async function getAIRequest(req, res) {
+export async function getAIRequest(req, res, user) {
   const prompt = req.query.prompt
   try {
     const playlist = await generatePlaylist(prompt);
