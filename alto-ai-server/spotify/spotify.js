@@ -18,6 +18,7 @@ async function searchTrack(song, artist, token) {
       uri: track.uri, // "spotify:track:xxxx"
       id: track.id,
       image: track.album.images?.[0]?.url || null,
+      duration: track.duration_ms
     };
   } catch (err) {
     console.log(`No match for ${song} by ${artist}`);
@@ -87,7 +88,7 @@ export async function checkValidSongs(user, playlist) {
   const tracks = await addTrackToArray(user, playlist);
   if (tracks.length > 0) {
     const trackURIs = tracks.map((track) => track.uri);
-    await addAllTracksToPlaylist(trackURIs, user.accessToken);
+    //await addAllTracksToPlaylist(trackURIs, user.accessToken);
   } else {
     console.log("⚠️ No valid tracks found.");
   }

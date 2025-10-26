@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../utils/api.js";
-export default function SearchBar(setSongs) {
+export default function SearchBar({setSongs}) {
   const [input, setInput] = useState("");
 
   function handleChange(e) {
@@ -11,6 +11,7 @@ export default function SearchBar(setSongs) {
     const req = await api.post("/spotify/createPlaylist", { prompt: input });
     console.log("Response data:", req.data);
     setSongs(req.data);
+    console.log("SetSongs: ", req.data);
   }
 
   const handleEnter = (e) => {

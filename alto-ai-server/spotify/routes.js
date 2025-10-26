@@ -11,7 +11,7 @@ export async function createPlaylistRoute(req, res, user) {
         console.log("🎵 Generated playlist for Spotify:", playlist);
 
         const tracks = await checkValidSongs(user, playlist);
-
+        console.log("Sent Tracks: ", tracks);
         res.status(200).send(tracks);
     } catch (err) {
         // console.error("Error in /createPlaylist:", err);
