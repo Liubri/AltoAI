@@ -1,17 +1,18 @@
 import Song from "./Song";
 import { songs1 } from "../testData";
-export default function Playlist({ songs, setPlay }) {
-  function createSongCard(songs) {
+export default function Playlist({ songs, setPlay, handlePlaySong }) {
+  function createSongCard(song) {
     return (
       <Song
-        key={songs.id}
-        name={songs.title}
-        artist={songs.artist}
-        img={songs.imgURL}
-        duration={formatDuration(songs.duration)}
+        key={song.id}
+        name={song.title}
+        artist={song.artist}
+        img={song.imgURL}
+        duration={formatDuration(song.duration)}
         onClick={() => {
-          console.log("Clicked song:", songs);
-          setPlay(songs);
+          console.log("Clicked song:", song);
+          setPlay(song);
+          handlePlaySong(song);
         }}
       />
     );

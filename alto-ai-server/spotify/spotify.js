@@ -1,16 +1,24 @@
 import spotifyAxios from "./spotifyAxios.js";
 import pLimit from "p-limit";
-
+import spotifyPreviewFinder from "spotify-preview-finder";
+import dotenv from "dotenv"
 async function searchTrack(song, artist, token) {
   try {
     const query = encodeURIComponent(`${song} ${artist}`);
+    const url = `https://itunes.apple.com/search?term=${query}&entity=song&limit=1`;
+    const res1 = await fetch(url);
+    const data1 = await res1.json();
     const res = await spotifyAxios.get(
       `/v1/search?q=${query}&type=track&limit=1`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     //Get the first track in search results
     const track = res.data.tracks.items[0];
+    //console.log("Track: ", track);
     if (!track) return null; // no results
+
+    //const previewUrl = await spotifyPreviewFinder(`${song}`, `${artist}`, 2);
+    //console.log("PreviewObject: ", previewUrl.results[0].previewUrls);
     return {
       title: track.name,
       artist: track.artists.map((a) => a.name).join(", "),
@@ -18,7 +26,9 @@ async function searchTrack(song, artist, token) {
       uri: track.uri, // "spotify:track:xxxx"
       id: track.id,
       image: track.album.images?.[0]?.url || null,
-      duration: track.duration_ms
+      duration: track.duration_ms,
+      // preview: previewUrl.results[0].previewUrls[0] ?? null
+      preview: data1.results[0].previewUrl
     };
   } catch (err) {
     console.log(`No match for ${song} by ${artist}`);

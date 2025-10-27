@@ -22,7 +22,7 @@ export async function getAIRequest(req, res) {
 
 export async function generatePlaylist(prompt) {
   const response = await client.chat.completions.create({
-    model: "mistralai/mistral-7b-instruct:free",
+    model: "alibaba/tongyi-deepresearch-30b-a3b:free",
     messages: [
       { role: "system", content: `You are a music recommendation assistant.
         When the user requests songs from a specific language or country, you must write the song and artist names in that language's native script.

@@ -1,6 +1,6 @@
 import { checkValidSongs } from "./spotify.js";
 import { updateAccessToken } from "./spotifyAuth.js";
-import { generatePlaylist } from "../ai.js";
+import { generatePlaylist } from "../openrouter.js";
 
 export async function createPlaylistRoute(req, res, user) {
     try {

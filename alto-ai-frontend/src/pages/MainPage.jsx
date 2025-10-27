@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import SearchBar from "../components/SearchBar";
-import { useState } from "react";
-import Song from "../components/Song";
+import { useState, useRef , useEffect} from "react";
 import Playlist from "../components/Playlist";
 import MusicPlayer from "../components/MusicPlayer";
 import { single1, stats1 } from "../testData";
@@ -12,6 +11,19 @@ export default function MainPage() {
   const token = useSelector((state) => state.auth).token;
   const [songs, setSongs] = useState([]);
   const [play, setPlay] = useState({});
+  const [currentTrack, setCurrentTrack] = useState(null);
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Auto-play whenever the track changes
+  useEffect(() => {
+    if (currentTrack && audioRef.current) {
+      audioRef.current.src = currentTrack.preview;
+      audioRef.current.volume = 0.2;
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  }, [currentTrack]);
 
   if (!token) {
     console.log("FunctionCalled");
@@ -28,20 +40,27 @@ export default function MainPage() {
         <div className="flex w-full gap-8">
           {/* Left Column: Playlist */}
           <div className="w-3/4 bg-violet-400 rounded-[1vh]">
-            <Playlist songs={songs} setPlay={setPlay} />
+            <Playlist
+              songs={songs}
+              setPlay={setCurrentTrack}
+              handlePlaySong={setCurrentTrack}
+            />
           </div>
 
           {/* Right Column: Music Player + Stats */}
           <div className="w-1/4 flex flex-col gap-4">
             {/* Music Player on top */}
-            {play.title && (
+            {currentTrack && (
               <MusicPlayer
-                name={play.title}
-                artist={play.artist}
-                imgURL={play.image}
+                name={currentTrack.title}
+                artist={currentTrack.artist}
+                imgURL={currentTrack.image}
+                audioRef={audioRef}
+                previewURL={currentTrack.preview}
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
               />
             )}
-
             {/* Playlist Stats below */}
             <PlaylistStats stats={stats1[0]} />
           </div>

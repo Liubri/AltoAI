@@ -1,12 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 
-export default function MusicPlayer({name, artist, imgURL}) {
-  const [isPlaying, setIsPlaying] = useState(false);
+export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL, isPlaying, setIsPlaying}) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-
-  const audioRef = useRef(null);
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -56,7 +53,7 @@ export default function MusicPlayer({name, artist, imgURL}) {
       {/* --- Audio element --- */}
       <audio
         ref={audioRef}
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // replace with your song
+        src={previewURL}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
       />
