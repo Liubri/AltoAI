@@ -36,6 +36,23 @@ async function searchTrack(song, artist, token) {
   }
 }
 
+export async function searchTrackFromPrompt(prompt, token) {
+  try {
+    const res = await spotifyAxios.get(
+      `/v1/search?q=${prompt}&type=track&limit=10`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    const tracks = res.data.tracks.items;
+    //console.log("Received Track: ", track);
+    return tracks.map((track)=>track.name)
+  } catch (err) {
+    console.log("Spotify Error", err);
+    return [];
+  }
+}
+
+
 async function addTrackToArray(user, playlist) {
   const limit = pLimit(5); // max 5 concurrent searches
   const searchPromises = playlist.map((item) =>

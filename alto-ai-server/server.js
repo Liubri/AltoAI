@@ -2,10 +2,11 @@ import express from "express";
 import cors from "cors";
 import { getAIRequest, generatePlaylist } from "./openrouter.js";
 import dotenv from "dotenv";
-import { spotifyCallback, spotifyLogin, requireAuth } from "./spotify/spotifyAuth.js";
-import { checkValidSongs } from "./spotify/spotify.js";
+import { spotifyCallback, spotifyLogin, requireAuth, updateAccessToken } from "./spotify/spotifyAuth.js";
+import { checkValidSongs , searchTrackFromPrompt} from "./spotify/spotify.js";
 import connectDB from "./models/db.js";
 import {createPlaylistRoute} from "./spotify/routes.js";
+import { User } from "./models/user.js";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,21 @@ app.get("/api/openai", requireAuth(getAIRequest));
 app.get("/spotify/login", spotifyLogin);
 
 app.get("/callback", spotifyCallback);
+
+app.get("/gen", async (req, res) => {
+  const prompt = req.query.prompt
+  const user = await User.findById("68fd3c548895c95af600db8d")
+  updateAccessToken(user)
+  const promptList = await generatePlaylist(prompt);
+  console.log("Prompt-list: ", promptList);
+  const list = []
+  for (const prompt of promptList) {
+    console.log("Prompt: ", prompt);
+    list.push(await searchTrackFromPrompt(prompt, user.accessToken))
+  }
+
+  res.send(list)
+});
 
 const PORT = 3000
 app.listen(PORT, () => {
