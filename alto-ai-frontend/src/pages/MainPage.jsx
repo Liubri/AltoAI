@@ -6,6 +6,7 @@ import MusicPlayer from "../components/MusicPlayer";
 import { single1, stats1 } from "../testData";
 import PlaylistStats from "../components/PlaylistStats";
 import Header from "../components/Header";
+import { Navigate } from "react-router-dom";
 
 export default function MainPage() {
   const token = useSelector((state) => state.auth).token;

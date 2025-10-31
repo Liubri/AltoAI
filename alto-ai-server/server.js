@@ -40,12 +40,12 @@ app.get("/gen", async (req, res) => {
   const promptList = await generatePlaylist(prompt);
   console.log("Prompt-list: ", promptList);
   const list = []
-  for (const prompt of promptList) {
-    console.log("Prompt: ", prompt);
-    list.push(await searchTrackFromPrompt(prompt, user.accessToken))
-  }
+  // for (const prompt of promptList) {
+  //   console.log("Prompt: ", prompt);
+  //   list.push(await searchTrackFromPrompt(prompt, user.accessToken))
+  // }
 
-  res.send(list)
+  res.send(promptList)
 });
 
 const PORT = 3000
