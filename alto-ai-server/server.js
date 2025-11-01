@@ -3,9 +3,9 @@ import cors from "cors";
 import { getAIRequest, generatePlaylist } from "./openrouter.js";
 import dotenv from "dotenv";
 import { spotifyCallback, spotifyLogin, requireAuth, updateAccessToken } from "./spotify/spotifyAuth.js";
-import { checkValidSongs , searchTrackFromPrompt} from "./spotify/spotify.js";
+import { checkValidSongs } from "./spotify/spotify.js";
 import connectDB from "./models/db.js";
-import {createPlaylistRoute} from "./spotify/routes.js";
+import {createPlaylistRoute, exportToSpotify} from "./spotify/routes.js";
 import { User } from "./models/user.js";
 
 dotenv.config();
@@ -26,6 +26,8 @@ app.get("/api/hello", (req, res) => {
 //   { title: "告白氣球", artist: "" },
 // ];
 app.post("/spotify/createPlaylist", requireAuth(createPlaylistRoute));
+
+app.post("/spotify/exportPlaylist", requireAuth(exportToSpotify))
 
 app.get("/api/openai", requireAuth(getAIRequest));
 

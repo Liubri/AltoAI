@@ -1,7 +1,6 @@
 import { useState } from "react";
-import api from "../utils/api.js";
 import CheckmarkGroup from "./CheckmarkGroup.jsx";
-export default function SearchBar({setSongs}) {
+export default function SearchBar({sendInput}) {
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState(null); // "specific" or "artist" or "ai"
   
@@ -9,16 +8,9 @@ export default function SearchBar({setSongs}) {
     setInput(e.target.value);
   }
 
-  async function sendInput() {
-    const req = await api.post("/spotify/createPlaylist", { prompt: input , mode: selected});
-    console.log("Response data:", req.data);
-    setSongs(req.data);
-    console.log("SetSongs: ", req.data);
-  }
-
   const handleEnter = (e) => {
     if (e.key === "Enter") {
-      sendInput();
+      sendInput(input, selected);
     }
   };
 
@@ -33,7 +25,7 @@ export default function SearchBar({setSongs}) {
           onChange={handleChange}
           onKeyDown={handleEnter}
         />
-        <button onClick={sendInput}>Generate playlist</button>
+        <button onClick={() => sendInput(input, selected)}>Generate playlist</button>
         </div>
         <CheckmarkGroup selected={selected} setSelected={setSelected}/>
       </div>

@@ -1,10 +1,11 @@
 import Song from "./Song";
 import { songs1 } from "../testData";
-export default function Playlist({ songs, setPlay, handlePlaySong }) {
-  function createSongCard(song) {
+import { formatDuration } from "../pages/MainPage";
+export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylist }) {
+  function createSongCard(song, index) {
     return (
       <Song
-        key={song.id}
+        key={index}
         name={song.title}
         artist={song.artist}
         img={song.imgURL}
@@ -18,19 +19,13 @@ export default function Playlist({ songs, setPlay, handlePlaySong }) {
     );
   }
 
-  function formatDuration(ms) {
-    const totalSeconds = Math.floor(ms / 1000); // convert ms → seconds
-    const minutes = Math.floor(totalSeconds / 60); // get full minutes
-    const seconds = totalSeconds % 60; // remaining seconds
-    const paddedSeconds = seconds.toString().padStart(2, "0"); // add leading 0 if needed
-    return `${minutes}:${paddedSeconds}`;
-  }
+  
 
   return (
     <div className="p-3">
       <div className="flex justify-between mb-2">
         <h2 className="pl-1 mt-3 mb-6 text-left">Your playlist</h2>
-        <button className="flex items-center">
+        <button className="flex items-center" onClick={exportPlaylist}>
           <img
             src="/Spotify_icon.png" // path to your image
             alt="export"

@@ -12,11 +12,6 @@ export default function PlaylistStats({ stats }) {
         <span>Total Duration:</span>
         <span className="font-semibold">{stats.totalDuration}</span>
       </div>
-
-      <div className="flex justify-between mb-2">
-        <span>Genre:</span>
-        <span className="font-semibold">{stats.genre}</span>
-      </div>
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import spotifyAxios from "./spotifyAxios.js";
 import pLimit from "p-limit";
-import spotifyPreviewFinder from "spotify-preview-finder";
 import dotenv from "dotenv"
+import spotifyPreviewFinder from "spotify-preview-finder";
+import {Song} from "../models/song.js";
+import { Playlist } from "../models/playlist.js";
+
 async function searchTrack(song, token) {
   try {
     // Search Spotify first
@@ -13,28 +16,14 @@ async function searchTrack(song, token) {
     if (!track) return null;
 
     // Search iTunes using Spotify track info
-    const itunesQuery = encodeURIComponent(`${track.name} ${track.artists[0].name}`);
-    const itunesUrl = `https://itunes.apple.com/search?term=${itunesQuery}&entity=song&limit=1`;
-    const itunesRes = await fetch(itunesUrl);
-    const itunesData = await itunesRes.json();
-
-    return {
-      title: track.name,
-      artist: track.artists.map(a => a.name).join(", "),
-      album: track.album.name,
-      uri: track.uri,
-      id: track.id,
-      image: track.album.images?.[0]?.url || null,
-      duration: track.duration_ms,
-      preview: itunesData.results[0]?.previewUrl || null,
-    };
+    return await getMusicPreview(track);
   } catch (err) {
     console.log(`No match for ${song}`, err);
     return null;
   }
 }
 
-export async function searchRandomTrack(song, token, spotifyLimit = 10, randomCount = 2) {
+export async function searchRandomTrack(song, token, spotifyLimit = 20) {
   try {
     // Search Spotify with the given limit
     const spotifyRes = await spotifyAxios.get(
@@ -45,49 +34,10 @@ export async function searchRandomTrack(song, token, spotifyLimit = 10, randomCo
     const tracks = spotifyRes.data.tracks.items;
     if (!tracks || tracks.length === 0) return [];
 
-    // Shuffle tracks and pick randomCount items
-    const shuffled = tracks.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, Math.min(randomCount, tracks.length));
-
     // Fetch previews
     const results = await Promise.all(
-      selected.map(async (track) => {
-        let preview = null;
-
-        // Try Spotify preview first
-        try {
-          const spotifyPreview = await spotifyPreviewFinder(track.name, track.artists[0].name, 1);
-          preview = spotifyPreview?.results?.[0]?.previewUrls?.[0] || null;
-        } catch (err) {
-          console.warn(`Spotify preview not found for ${track.name}:`, err.message);
-        }
-
-        // If no Spotify preview, fallback to iTunes
-        if (!preview) {
-          try {
-            const itunesQuery = encodeURIComponent(`${track.name} ${track.artists[0].name}`);
-            const itunesUrl = `https://itunes.apple.com/search?term=${itunesQuery}&entity=song&limit=1`;
-            const itunesRes = await fetch(itunesUrl);
-            const itunesData = await itunesRes.json();
-            preview = itunesData.results[0]?.previewUrl || null;
-          } catch (err) {
-            console.warn(`iTunes preview not found for ${track.name}:`, err.message);
-          }
-        }
-
-        return {
-          title: track.name,
-          artist: track.artists.map(a => a.name).join(", "),
-          album: track.album.name,
-          uri: track.uri,
-          id: track.id,
-          image: track.album.images?.[0]?.url || null,
-          duration: track.duration_ms,
-          preview,
-        };
-      })
+      tracks.map(getMusicPreview)
     );
-
     return results;
   } catch (err) {
     console.log(`No match for ${song}`, err);
@@ -95,118 +45,99 @@ export async function searchRandomTrack(song, token, spotifyLimit = 10, randomCo
   }
 }
 
-export async function getRandomTracksByArtist(token, artistName, limit = 20, perSearch = 10) {
+export async function getRandomTracksByArtist(artistName, token) {
   try {
     // Search Spotify for tracks by artist
+    const limit = 20;
     const query = encodeURIComponent(`artist:${artistName}`);
     const res = await spotifyAxios.get(`/v1/search?q=${query}&type=track&limit=${limit}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    console.log(res.data);
+
     const tracks = res.data.tracks.items;
-    if (!tracks || tracks.length === 0) return [];
 
-    // Randomly select 'perSearch' tracks
-    const shuffled = tracks.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, Math.min(perSearch, tracks.length));
+    // If no tracks found, fallback to random track search
+    if (!tracks || tracks.length === 0) {
+      return searchRandomTrack(artistName, token, limit);
+    }
 
-    return selected.map(track => ({
-      title: track.name,
-      artist: track.artists.map(a => a.name).join(", "),
-      album: track.album.name,
-      uri: track.uri,
-      id: track.id,
-      image: track.album.images?.[0]?.url || null,
-      duration: track.duration_ms,
-    }));
+    console.log(tracks);
+    const results = await Promise.all(
+      tracks.map(getMusicPreview)
+    );
+
+    return results;
   } catch (err) {
     console.error(`Failed to get tracks for ${artistName}:`, err.message);
     return [];
   }
 }
 
-export async function getRandomTracksFromArtists(token, artistNames, maxTotalSongs = 10, perArtistLimit = 50) {
-  const tracks = [];
+// const selectedWithPreviews = await Promise.all(selected.map(getMusicPreview));
+export async function getMusicPreview(track) {
+  //If Song is in the database return it
+  const songData = await Song.findOne({ id: track.id });
+  if (songData) {
+    return songData;
+  }
+  let preview = null;
 
-  // Fetch tracks for each artist
-  for (let artist of artistNames) {
+  // Try Spotify preview first
+  try {
+    const spotifyPreview = await spotifyPreviewFinder(track.name, track.artists[0].name, 1);
+    preview = spotifyPreview?.results?.[0]?.previewUrls?.[0] || null;
+  } catch (err) {
+    console.warn(`Spotify preview not found for ${track.name}:`, err.message);
+  }
+
+  // If no Spotify preview, fallback to iTunes
+  if (!preview) {
     try {
-      const query = encodeURIComponent(`artist:${artist}`);
-      const res = await spotifyAxios.get(`/v1/search?q=${query}&type=track&limit=${perArtistLimit}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const artistTracks = res.data.tracks.items;
-      if (!artistTracks || artistTracks.length === 0) continue;
-
-      // Randomly shuffle the artist's tracks
-      const shuffled = artistTracks.sort(() => 0.5 - Math.random());
-
-      // Decide how many tracks to take for this artist
-      const remaining = maxTotalSongs - tracks.length;
-      if (remaining <= 0) break;
-
-      const take = Math.min(remaining, shuffled.length);
-      const selected = shuffled.slice(0, take);
-
-      // Fetch iTunes preview URLs concurrently
-      const selectedWithPreviews = await Promise.all(
-        selected.map(async (track) => {
-          let preview = null;
-          try {
-            const itunesQuery = encodeURIComponent(`${track.name} ${track.artists[0].name}`);
-            const itunesUrl = `https://itunes.apple.com/search?term=${itunesQuery}&entity=song&limit=1`;
-            const itunesRes = await fetch(itunesUrl);
-            const itunesData = await itunesRes.json();
-            preview = itunesData.results[0]?.previewUrl || null;
-          } catch (err) {
-            console.error(`Failed to fetch iTunes preview for ${track.name}:`, err.message);
-          }
-
-          return {
-            title: track.name,
-            artist: track.artists.map(a => a.name).join(", "),
-            album: track.album.name,
-            uri: track.uri,
-            id: track.id,
-            image: track.album.images?.[0]?.url || null,
-            duration: track.duration_ms,
-            preview,
-          };
-        })
-      );
-
-      tracks.push(...selectedWithPreviews);
+      const itunesQuery = encodeURIComponent(`${track.name} ${track.artists[0].name}`);
+      const itunesUrl = `https://itunes.apple.com/search?term=${itunesQuery}&entity=song&limit=1`;
+      const itunesRes = await fetch(itunesUrl);
+      const itunesData = await itunesRes.json();
+      preview = itunesData.results[0]?.previewUrl || null;
     } catch (err) {
-      console.error(`Failed to fetch tracks for ${artist}:`, err.message);
+      console.warn(`iTunes preview not found for ${track.name}:`, err.message);
     }
   }
 
-  return tracks;
+  const newSongData = {
+    title: track.name,
+    artist: track.artists.map(a => a.name).join(", "),
+    album: track.album.name,
+    uri: track.uri,
+    id: track.id,
+    image: track.album.images?.[0]?.url || null,
+    duration: track.duration_ms,
+    preview,
+  };
+
+  //Put Song in database
+  const song = await Song.create(newSongData).catch(err => {
+    console.error(`Failed to save song ${track.name}:`, err.message);
+  });
+
+  return song;
+      
 }
 
-export async function searchTrackFromPrompt(prompt, token) {
-  try {
-    const res = await spotifyAxios.get(
-      `/v1/search?q=${prompt}&type=track&limit=10`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    
-    const tracks = res.data.tracks.items;
-    //console.log("Received Track: ", track);
-    return tracks.map((track)=>track.name)
-  } catch (err) {
-    console.log("Spotify Error", err);
-    return [];
-  }
+function takeRandom(arr) {
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
 }
-
 
 async function addTrackToArray(user, playlist, mode) {
-  console.log("AddtoTrackPlaylist: ", playlist);
-  const limit = pLimit(5); // max 5 concurrent searches
+  const limit = pLimit(10); // max 5 concurrent searches
   let searchPromises;
-  if (mode === "specific" || mode === "artist") {
+  if (mode === "artist"){
+    searchPromises = playlist.map((item) =>
+      limit(() => getRandomTracksByArtist(item, user.accessToken)));
+  }
+  else if (mode === "specific") {
       searchPromises = playlist.map((item) =>
       limit(() => searchTrack(item, user.accessToken)));
   } else {
@@ -217,9 +148,27 @@ async function addTrackToArray(user, playlist, mode) {
   // wait for all results
   const results = await Promise.all(searchPromises);
 
-  // filter out nulls (failed searches)
-  const validTracks = results.flat().filter((track) => track !== null);
-  return validTracks;
+  console.log("RESULTS:", results);
+
+  if (mode === null || mode === "artist") {
+    const validTracks = []
+    for (let i = 0; i < results.length; i++) {
+      let needToAdd = Math.ceil(10 / results.length);
+      while(needToAdd > 0){
+        const track = takeRandom(results[i]);
+        // console.log("Selected Track: ", track.title ?? "artist", validTracks.map(t => t.title + " - " + t.artist));
+        if(track !== null && validTracks.filter(t => t.title === track.title && t.artist === track.artist).length === 0){
+          validTracks.push(track);
+          needToAdd -= 1;
+        }
+      }
+    }
+    return validTracks;
+  }
+  else{
+    const validTracks = results.flat().filter((track) => track !== null);
+    return validTracks;
+  }
 }
 
 async function createPlaylist(userId, name, token) {
@@ -237,7 +186,7 @@ async function createPlaylist(userId, name, token) {
   return res.data.id; // Returns the new playlist ID
 }
 
-async function addAllTracksToPlaylist(trackURIs, token) {
+export async function addAllTracksToPlaylist(trackURIs, token) {
   try {
     // Step 1: get current user profile to find userId
     const userRes = await spotifyAxios.get("/v1/me", {
@@ -265,12 +214,9 @@ async function addAllTracksToPlaylist(trackURIs, token) {
 }
 
 export async function checkValidSongs(user, playlist, mode) {
-  let tracks;
-  if (mode === "artist") {
-    tracks = await getRandomTracksFromArtists(user.accessToken, playlist)
-  } else {
-    tracks = await addTrackToArray(user, playlist, mode);
-  }
+  console.log("Check Songs: ", playlist);
+  const tracks = await addTrackToArray(user, playlist, mode);
+  
   if (tracks.length > 0) {
     const trackURIs = tracks.map((track) => track.uri);
     //await addAllTracksToPlaylist(trackURIs, user.accessToken);
@@ -280,3 +226,23 @@ export async function checkValidSongs(user, playlist, mode) {
   
   return tracks;
 }
+
+// Helper to clean and split the prompt into an array of songs
+export function parseSongsFromPrompt(prompt) {
+  if (!prompt) return [];
+  return prompt
+    .split(",")               // split by comma
+    .map((s) => s.trim())    // remove extra spaces
+    .filter((s) => s.length > 0); // remove empty strings
+}
+
+export async function addTracksToDatabase(tracks, user) {
+  const playlist = await Playlist.create({
+    user: user._id,
+    playlist: tracks.map(track => track._id)
+  });
+
+
+  return playlist;
+}
+  

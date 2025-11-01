@@ -76,7 +76,7 @@ export async function spotifyCallback(req, res) {
     const jwtToken = jwt.sign(
       { userId: user._id, spotifyId: user.spotifyId },
       SECRET_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: "30d" }
     );
 
     res.redirect(FRONTEND_URL + "login?token=" + jwtToken);
@@ -135,13 +135,16 @@ export function requireAuth(handler) {
     }
 
     const token = authHeader.split(" ")[1];
-
+    let user;
     try {
-      const user = await getUserFromToken(token);
+      user = await getUserFromToken(token);
       // pass the user to the handler
-      return await handler(req, res, user);
     } catch (err) {
       return res.status(401).send("Invalid or expired token");
     }
+    if (!user) {
+      return res.status(401).send("User not found");
+    }
+    return await handler(req, res, user);
   };
 }

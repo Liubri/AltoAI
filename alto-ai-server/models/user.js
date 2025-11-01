@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const {Schema} = mongoose;
+const userSchema = new Schema({
   spotifyId: { type: String, unique: true },
   username: String,
   accessToken: String,
