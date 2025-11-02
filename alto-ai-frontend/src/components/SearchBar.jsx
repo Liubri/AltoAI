@@ -18,10 +18,16 @@ export default function SearchBar({sendInput}) {
     <div className="w-[700px]">
       <div className="bg-sky-600 backdrop-blur-sm flex flex-col gap-4 rounded-xl p-6">
         <p className="text-left">Describe your perfect playlist</p>
-        <div className="flex gap-3">
+        <div id="poda" className="flex gap-3 relative items-center">
+          <div className="glow"></div>
+          <div className="darkBorderBg"></div>
+          <div className="darkBorderBg"></div>
+          <div className="darkBorderBg"></div>
+          <div class="white"></div>
+          <div className="border"></div>
         <input
           placeholder=" Type your prompt"
-          className="flex-grow border-2 border-red-500 rounded-lg px-3 py-2"
+          className="flex-grow rounded-lg px-3 py-2 bg-black ml-1"
           onChange={handleChange}
           onKeyDown={handleEnter}
         />

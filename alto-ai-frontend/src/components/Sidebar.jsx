@@ -18,7 +18,7 @@ export default function Sidebar({ isSidebarOpen }) {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="p-4 rounded-lg cursor-pointer border border-gray-200 group"
+              className="p-4 rounded-lg cursor-pointer border-gray-200 group"
             >
               <div>
                 <p className="font-medium text-sm mb-2 line-clamp-2 text-white-800">
