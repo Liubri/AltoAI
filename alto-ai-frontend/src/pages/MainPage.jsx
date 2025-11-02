@@ -8,8 +8,11 @@ import PlaylistStats from "../components/PlaylistStats";
 import Header from "../components/Header";
 import { Navigate } from "react-router-dom";
 import api from "../utils/api.js";
+import Sidebar from "../components/Sidebar";
+import { HistoryIcon } from "lucide-react";
 
 export default function MainPage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const token = useSelector((state) => state.auth).token;
   const [songs, setSongs] = useState([]);
   const [play, setPlay] = useState({});
@@ -56,50 +59,67 @@ export default function MainPage() {
   const stats = {
     totalTracks: songs.length,
     totalDuration: formatDuration(
-      songs.reduce((acc, song) => acc + (song.duration), 0) ?? 0
+      songs.reduce((acc, song) => acc + song.duration, 0) ?? 0
     ),
   };
   return (
-   <div>
-      <Header />
-      <div className="flex justify-center mb-8">
-        <SearchBar
-          sendInput={sendInput}
-          setCurrentPlaylistId={setCurrentPlaylistId}
-        />
-      </div>
-
-      {songs.length > 0 ? (
-        <div className="flex w-full gap-8">
-          {/* Left Column: Playlist */}
-          <div className="w-3/4 bg-violet-400 rounded-[1vh]">
-            <Playlist
-              songs={songs}
-              setPlay={setCurrentTrack}
-              handlePlaySong={setCurrentTrack}
-              exportPlaylist={exportPlaylist}
+    <div className="flex relative">
+      <Sidebar isSidebarOpen={isSidebarOpen} />
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          isSidebarOpen ? "ml-80" : "ml-0"
+        }`}
+      >
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Sidebar Toggle Button */}
+          <div className="flex items-center mb-4">
+            <button
+              className="!p-0 w-15 h-15 flex items-center justify-center border-gray-300 rounded-lg bg-white/70 hover:bg-gray-100 transition-all backdrop-blur-sm"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+            <HistoryIcon />
+            </button>
+          </div>
+          <Header />
+          <div className="flex justify-center mb-8">
+            <SearchBar
+              sendInput={sendInput}
+              setCurrentPlaylistId={setCurrentPlaylistId}
             />
           </div>
+          {songs.length > 0 && (
+            <div className="flex w-full gap-8">
+              {/* Left Column: Playlist */}
+              <div className="w-3/4 bg-violet-400 rounded-[1vh]">
+                <Playlist
+                  songs={songs}
+                  setPlay={setCurrentTrack}
+                  handlePlaySong={setCurrentTrack}
+                  exportPlaylist={exportPlaylist}
+                />
+              </div>
 
-          {/* Right Column: Music Player + Stats */}
-          <div className="w-1/4 flex flex-col gap-4">
-            {/* Music Player on top */}
-            {currentTrack && (
-              <MusicPlayer
-                name={currentTrack.title}
-                artist={currentTrack.artist}
-                imgURL={currentTrack.image}
-                audioRef={audioRef}
-                previewURL={currentTrack.preview}
-                isPlaying={isPlaying}
-                setIsPlaying={setIsPlaying}
-              />
-            )}
-            {/* Playlist Stats below */}
-            <PlaylistStats stats={stats} />
-          </div>
+              {/* Right Column: Music Player + Stats */}
+              <div className="w-1/4 flex flex-col gap-4">
+                {/* Music Player on top */}
+                {currentTrack && (
+                  <MusicPlayer
+                    name={currentTrack.title}
+                    artist={currentTrack.artist}
+                    imgURL={currentTrack.image}
+                    audioRef={audioRef}
+                    previewURL={currentTrack.preview}
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                  />
+                )}
+                {/* Playlist Stats below */}
+                <PlaylistStats stats={stats} />
+              </div>
+            </div>
+          )}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
