@@ -54,8 +54,6 @@ export async function getRandomTracksByArtist(artistName, token) {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log(res.data);
-
     const tracks = res.data.tracks.items;
 
     // If no tracks found, fallback to random track search
@@ -63,7 +61,7 @@ export async function getRandomTracksByArtist(artistName, token) {
       return searchRandomTrack(artistName, token, limit);
     }
 
-    console.log(tracks);
+    // console.log(tracks);
     const results = await Promise.all(
       tracks.map(getMusicPreview)
     );
@@ -147,8 +145,6 @@ async function addTrackToArray(user, playlist, mode) {
 
   // wait for all results
   const results = await Promise.all(searchPromises);
-
-  console.log("RESULTS:", results);
 
   if (mode === null || mode === "artist") {
     const validTracks = []

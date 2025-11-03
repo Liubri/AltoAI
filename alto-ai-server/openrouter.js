@@ -11,7 +11,7 @@ export async function getAIRequest(req, res) {
   const prompt = req.query.prompt;
   try {
     const playlist = await generatePlaylist(prompt);
-    console.log("Generated playlist:", playlist);
+    // console.log("Generated playlist:", playlist);
     console.log(Array.isArray(playlist)); // true
     res.json({ playlist });
   } catch (err) {

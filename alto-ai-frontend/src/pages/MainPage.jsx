@@ -3,7 +3,7 @@ import SearchBar from "../components/SearchBar";
 import { useState, useRef, useEffect } from "react";
 import Playlist from "../components/Playlist";
 import MusicPlayer from "../components/MusicPlayer";
-import { single1, stats1 } from "../testData";
+import { single1, stats1, songs1 } from "../testData";
 import PlaylistStats from "../components/PlaylistStats";
 import Header from "../components/Header";
 import { Navigate } from "react-router-dom";
@@ -90,7 +90,7 @@ export default function MainPage() {
           {songs.length > 0 && (
             <div className="flex w-full gap-8">
               {/* Left Column: Playlist */}
-              <div className="w-3/4 bg-violet-400 rounded-[1vh]">
+              <div className="w-3/4 bg-secondary rounded-[1vh]">
                 <Playlist
                   songs={songs}
                   setPlay={setCurrentTrack}

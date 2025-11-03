@@ -34,8 +34,8 @@ export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL,
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 bg-violet-300 rounded-[1vh] p-5 shadow-md w-[260px]">
-      <h3 className="text-left w-full text-sm font-semibold text-violet-900">
+    <div className="flex flex-col items-center gap-4 bg-secondary rounded-[1vh] p-5 shadow-md w-[260px]">
+      <h3 className="text-left w-full text-sm font-semibold text-accent">
         Now Playing
       </h3>
 
@@ -69,7 +69,7 @@ export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL,
             audioRef.current.currentTime = e.target.value;
             setCurrentTime(e.target.value);
           }}
-          className="w-full h-1 rounded-lg appearance-none bg-violet-200 accent-violet-600 cursor-pointer"
+          className="w-full h-1 rounded-lg appearance-none bg-tertiary accent-primary cursor-pointer"
         />
         <div className="flex justify-between text-xs text-gray-700">
           <span>{formatTime(currentTime)}</span>

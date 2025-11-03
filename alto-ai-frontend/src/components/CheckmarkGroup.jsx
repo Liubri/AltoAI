@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Checkmark from "./Checkmark";
 
-export default function CheckmarkGroup({selected, setSelected}) {
+export default function CheckmarkGroup({selected, setSelected, className}) {
   return (
-    <div className="flex gap-4">
+    <div className={`flex gap-4 ${className || ""}`}>
       <Checkmark
         name="Specific Song"
         checked={selected === "specific"}

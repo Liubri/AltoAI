@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+
+@theme {
+  --color-primary: #777C6D;
+  --color-secondary: #B7B89F;
+  --color-tertiary: #CBCBCB;
+  --color-quaternary: #232C33;
+  --color-accent: #EEEEEE;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -7,7 +16,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #777C6D;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -44,7 +53,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #232C33;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -71,8 +80,8 @@ button:focus-visible {
 
 input {
   z-index: 10;
-  width: 200px;
-  height: 40px;
+  /* width: 200px; */
+  /* height: 40px; */
   border: none;
 }
 input:focus {
@@ -235,7 +244,7 @@ input:focus {
   animation: rotate 4s 0.3s linear infinite;
   transition: all 2s;
 }
-#poda:focus-within > .darkBorderBg::before {
+/* #poda:focus-within > .darkBorderBg::before {
   transform: translate(-50%, -50%) rotate(442deg);
   transition: all 4s;
 }
@@ -250,4 +259,4 @@ input:focus {
 #poda:focus-within > .white::before {
   transform: translate(-50%, -50%) rotate(443deg);
   transition: all 4s;
-}
+} */

@@ -24,7 +24,7 @@ export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylis
   return (
     <div className="p-3">
       <div className="flex justify-between mb-2">
-        <h2 className="pl-1 mt-3 mb-6 text-left">Your playlist</h2>
+        <h2 className="pl-4 mt-3 mb-6 text-left">Your playlist</h2>
         <button className="flex items-center" onClick={exportPlaylist}>
           <img
             src="/Spotify_icon.png" // path to your image

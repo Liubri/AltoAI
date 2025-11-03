@@ -16,8 +16,8 @@ export default function SearchBar({sendInput}) {
 
   return (
     <div className="w-[700px]">
-      <div className="bg-sky-600 backdrop-blur-sm flex flex-col gap-4 rounded-xl p-6">
-        <p className="text-left">Describe your perfect playlist</p>
+      <div className="bg-secondary backdrop-blur-sm flex flex-col gap-4 rounded-xl p-6">
+        <p className="text-accent text-left">Describe your perfect playlist</p>
         <div id="poda" className="flex gap-3 relative items-center">
           <div className="glow"></div>
           <div className="darkBorderBg"></div>
@@ -27,13 +27,13 @@ export default function SearchBar({sendInput}) {
           <div className="border"></div>
         <input
           placeholder=" Type your prompt"
-          className="flex-grow rounded-lg px-3 py-2 bg-black ml-1"
+          className="flex-grow rounded-lg px-3 py-2 bg-quaternary ml-1"
           onChange={handleChange}
           onKeyDown={handleEnter}
         />
-        <button onClick={() => sendInput(input, selected)}>Generate playlist</button>
+        <button className="text-accent" onClick={() => sendInput(input, selected)}>Generate playlist</button>
         </div>
-        <CheckmarkGroup selected={selected} setSelected={setSelected}/>
+        <CheckmarkGroup className="text-accent" selected={selected} setSelected={setSelected}/>
       </div>
     </div>
   );
