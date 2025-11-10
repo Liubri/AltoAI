@@ -15,7 +15,7 @@ export default function MainPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const token = useSelector((state) => state.auth).token;
   const [songs, setSongs] = useState([]);
-  const [play, setPlay] = useState({});
+  const [playlistName, setPlaylistName] = useState("Alto-AI");
   const [currentTrack, setCurrentTrack] = useState(null);
   const [currentPlaylistId, setCurrentPlaylistId] = useState(null);
   const audioRef = useRef(null);
@@ -47,6 +47,7 @@ export default function MainPage() {
     console.log("PlaylistID: ", currentPlaylistId);
     await api.post("/spotify/exportPlaylist", {
       playlist_id: currentPlaylistId,
+      playlist_name: playlistName,
     });
     console.log("Exported playlist to Spotify!");
   }
@@ -136,6 +137,7 @@ export default function MainPage() {
                   setPlay={setCurrentTrack}
                   handlePlaySong={setCurrentTrack}
                   exportPlaylist={exportPlaylist}
+                  setPlaylistName={setPlaylistName}
                 />
               </div>
 

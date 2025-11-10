@@ -36,9 +36,9 @@ export async function createPlaylistRoute(req, res, user) {
 
 export async function exportToSpotify(req, res, user) {
     await updateAccessToken(user);
-    const { playlist_id } = req.body;
+    const { playlist_id, playlist_name } = req.body;
     const item = await Playlist.findById(playlist_id).populate("playlist");
-    await addAllTracksToPlaylist(item.playlist.map((track)=>track.uri), user.accessToken)
+    await addAllTracksToPlaylist(item.playlist.map((track)=>track.uri), user.accessToken, playlist_name);
     console.log("Added all tracks!");
     res.status(200)
 }

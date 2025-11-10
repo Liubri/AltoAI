@@ -182,7 +182,7 @@ async function createPlaylist(userId, name, token) {
   return res.data.id; // Returns the new playlist ID
 }
 
-export async function addAllTracksToPlaylist(trackURIs, token) {
+export async function addAllTracksToPlaylist(trackURIs, token, playlistName) {
   try {
     // Step 1: get current user profile to find userId
     const userRes = await spotifyAxios.get("/v1/me", {
@@ -191,7 +191,7 @@ export async function addAllTracksToPlaylist(trackURIs, token) {
     const userId = userRes.data.id;
 
     // Step 2: create a new playlist
-    const playlistId = await createPlaylist(userId, "Alto-AI", token);
+    const playlistId = await createPlaylist(userId, playlistName, token);
 
     // Step 3: add all tracks from array
     const addRes = await spotifyAxios.post(
@@ -212,14 +212,6 @@ export async function addAllTracksToPlaylist(trackURIs, token) {
 export async function checkValidSongs(user, playlist, mode) {
   console.log("Check Songs: ", playlist);
   const tracks = await addTrackToArray(user, playlist, mode);
-  
-  if (tracks.length > 0) {
-    const trackURIs = tracks.map((track) => track.uri);
-    //await addAllTracksToPlaylist(trackURIs, user.accessToken);
-  } else {
-    console.log("⚠️ No valid tracks found.");
-  }
-  
   return tracks;
 }
 
