@@ -1,9 +1,11 @@
 import { useState } from "react";
 import CheckmarkGroup from "./CheckmarkGroup.jsx";
-export default function SearchBar({sendInput}) {
+import Loader from "./Loader.jsx";
+
+export default function SearchBar({ sendInput, isLoading }) {
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState(null); // "specific" or "artist" or "ai"
-  
+
   function handleChange(e) {
     setInput(e.target.value);
   }
@@ -25,15 +27,38 @@ export default function SearchBar({sendInput}) {
           <div className="darkBorderBg"></div>
           <div className="white"></div>
           <div className="border-searchbar"></div>
-        <input
-          placeholder=" Type your prompt"
-          className="grow rounded-lg px-3 py-2 bg-quaternary ml-1"
-          onChange={handleChange}
-          onKeyDown={handleEnter}
-        />
-        <button className="text-accent" onClick={() => sendInput(input, selected)}>Generate playlist</button>
+          <input
+            placeholder=" Type your prompt"
+            className="grow rounded-lg px-3 py-2 bg-quaternary ml-1"
+            onChange={handleChange}
+            onKeyDown={handleEnter}
+          />
+          <button
+            className={`text-accent ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={() => sendInput(input, selected)}
+            disabled={isLoading}
+          >
+            Generate playlist
+          </button>
         </div>
-        <CheckmarkGroup className="text-accent" selected={selected} setSelected={setSelected}/>
+        <div className="flex items-center justify-between h-[50px">
+          <CheckmarkGroup
+            className="text-accent"
+            selected={selected}
+            setSelected={setSelected}
+          />
+          <div
+            className={`h-[30px] transition-opacity duration-100 ${
+              isLoading ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Loader />
+          </div>
+          {/* {isLoading && <Loader />} */}
+          {/* <Loader /> */}
+        </div>
       </div>
     </div>
   );

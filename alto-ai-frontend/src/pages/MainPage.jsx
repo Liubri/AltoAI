@@ -21,6 +21,7 @@ export default function MainPage() {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playlistHistory, setPlaylistHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fetchPlaylistById(playlistID) {
     try {
@@ -54,17 +55,18 @@ export default function MainPage() {
   }
 
   async function sendInput(input, selected) {
+    setIsLoading(true);
     const req = await api.post("/spotify/createPlaylist", {
       prompt: input,
       mode: selected,
     });
-
     setPlaylistHistory([{prompt: input, id: req.data.playlist_id, track_count: req.data.tracks.length, createdAt: new Date().toLocaleDateString(), title: req.data.title},...playlistHistory]);
     setSongs(req.data.tracks);
     setPlaylistName("Alto-AI");
     console.log(req.data);
     setCurrentPlaylistId(req.data.playlist_id);
     console.log("SetSongs: ", req.data);
+    setIsLoading(false);
   }
 
   // Auto-play whenever the track changes
@@ -128,6 +130,7 @@ export default function MainPage() {
             <SearchBar
               sendInput={sendInput}
               setCurrentPlaylistId={setCurrentPlaylistId}
+              isLoading={isLoading}
             />
           </div>
           {songs.length > 0 && (
