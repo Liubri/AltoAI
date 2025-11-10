@@ -117,7 +117,7 @@ export default function MainPage() {
           {/* Sidebar Toggle Button */}
           <div className="flex items-center mb-4">
             <button
-              className="!p-0 w-15 h-15 flex items-center justify-center border-gray-300 rounded-lg bg-white/70 hover:bg-gray-100 transition-all backdrop-blur-sm"
+              className="!p-0 w-15 h-15 flex items-center justify-center bg-quaternary border-gray-300 rounded-lg transition-all backdrop-blur-sm"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
             <HistoryIcon />

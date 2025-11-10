@@ -16,7 +16,11 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #777C6D;
+  background: linear-gradient(to bottom right,
+    var(--color-primary),
+    var(--color-secondary),
+    var(--color-tertiary)
+  );
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -41,10 +45,10 @@ body {
   min-height: 100vh;
 }
 
-h1 {
+/* h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
+} */
 
 button {
   border-radius: 8px;
@@ -53,13 +57,13 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #232C33;
+  /* background-color: #777C6D; */
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+/* button:hover {
   border-color: #646cff;
-}
+} */
 /* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

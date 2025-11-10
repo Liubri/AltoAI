@@ -46,7 +46,7 @@ export default function Sidebar({ isSidebarOpen, getPlaylistById, deletePlaylist
                 </div>
               </div>
               <div className="flex justify-between opacity-0 transition-opacity ease-in-out group-hover:opacity-100 mt-2">
-                <button className="center h-11 min-w-max ">
+                <button className="center h-11 min-w-max bg-quaternary">
                   <img
                     src="/Spotify_icon.png" // path to your image
                     alt="export"

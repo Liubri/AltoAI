@@ -34,7 +34,7 @@ export default function SearchBar({ sendInput, isLoading }) {
             onKeyDown={handleEnter}
           />
           <button
-            className={`text-accent ${
+            className={`text-accent bg-quaternary ${
               isLoading ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={() => sendInput(input, selected)}

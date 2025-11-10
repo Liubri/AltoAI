@@ -2,7 +2,7 @@ import { Play } from "lucide-react";
 export default function Song(props) {
   return (
     <div className="flex items-center gap-4 p-4 rounded-[2vh] hover:bg-secondary filter brightness-90 transition-colors cursor-pointer">
-      <button className="!p-3 flex items-center hover:bg-sky-800"
+      <button className="!p-3 flex items-center bg-quaternary outline-2 outline-transparent hover:outline-accent transition-all"
       onClick={props.onClick}>
         <Play size={20} />
       </button>

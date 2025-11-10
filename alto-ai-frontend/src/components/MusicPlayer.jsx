@@ -81,21 +81,21 @@ export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL,
       <div className="flex items-center gap-2">
         {/* Change the onClick the play next song */}
         <button
-          className="!p-2 rounded-full bg-violet-400 hover:bg-violet-500 transition flex items-center justify-center"
+          className="!p-2 rounded-full bg-quaternary outline-2 outline-transparent hover:outline-accent transition flex items-center justify-center"
           onClick={() => (audioRef.current.currentTime = 0)}
         >
           <SkipBack size={16} />
         </button>
 
         <button
-          className="p-3 rounded-full bg-violet-500 hover:bg-violet-600 transition flex items-center justify-center"
+          className="p-3 rounded-full bg-quaternary outline-2 outline-transparent hover:outline-accent transition flex items-center justify-center"
           onClick={togglePlay}
         >
           {isPlaying ? <Pause size={22} /> : <Play size={22} />}
         </button>
 
         <button
-          className="p-2! rounded-full bg-violet-400 hover:bg-violet-500 transition flex items-center justify-center"
+          className="p-2! rounded-full bg-quaternary outline-2 outline-transparent hover:outline-accent transition flex items-center justify-center"
           onClick={() => (audioRef.current.currentTime = duration)}
         >
           <SkipForward size={16} />
