@@ -27,7 +27,7 @@ export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylis
     <div className="p-3 drop-shadow-lg">
       <div className="flex justify-between mb-2">
         <EditableText playlistName={playlistName} setPlaylistName={setPlaylistName} />
-        <button className="flex items-center" onClick={exportPlaylist}>
+        <button className="flex items-center" onClick={(e) => { e.stopPropagation(); exportPlaylist(); }}>
           <img
             src="/Spotify_icon.png" // path to your image
             alt="export"

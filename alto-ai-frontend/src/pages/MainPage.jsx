@@ -26,7 +26,6 @@ export default function MainPage() {
   async function fetchPlaylistById(playlistID) {
     try {
       const req = await api.get(`/playlist/get?id=${playlistID}`);
-      console.log("Playlist fetch request data:", req.data);
       setSongs(req.data.tracks);
       setCurrentPlaylistId(req.data.playlist_id);
       setPlaylistName(req.data.title);
@@ -38,20 +37,18 @@ export default function MainPage() {
   async function deletePlaylistById(playlistID) {
     try {
       await api.delete(`/playlist/delete?id=${playlistID}`);
-      console.log("Deleted playlist with ID:", playlistID);
       setPlaylistHistory(playlistHistory.filter(pl => pl.id !== playlistID));
     } catch (error) {
       console.error("Error deleting playlist:", error);
     }
   }
 
-  async function exportPlaylist() {
-    console.log("PlaylistID: ", currentPlaylistId);
+  async function exportPlaylist(playlistID = null) {
+    const idToUse = playlistID ?? currentPlaylistId;
     await api.post("/spotify/exportPlaylist", {
-      playlist_id: currentPlaylistId,
+      playlist_id: idToUse,
       playlist_name: playlistName,
     });
-    console.log("Exported playlist to Spotify!");
   }
 
   async function sendInput(input, selected) {
@@ -109,6 +106,7 @@ export default function MainPage() {
       getPlaylistById={fetchPlaylistById} 
       history={playlistHistory}
       deletePlaylistById={deletePlaylistById}
+      exportPlaylist={exportPlaylist}
       />
       <div
         className={`flex-1 transition-all duration-300 ${
