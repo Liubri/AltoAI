@@ -1,5 +1,5 @@
 import { Trash } from "lucide-react";
-export default function Sidebar({ isSidebarOpen, getPlaylistById, history }) {
+export default function Sidebar({ isSidebarOpen, getPlaylistById, deletePlaylistById, history }) {
   function formatDate(isoString) {
     const date = new Date(isoString);
     return date.toLocaleDateString("en-US", {
@@ -46,7 +46,7 @@ export default function Sidebar({ isSidebarOpen, getPlaylistById, history }) {
                 </div>
               </div>
               <div className="flex justify-between opacity-0 transition-opacity ease-in-out group-hover:opacity-100 mt-2">
-                <button className="center h-10 min-w-max ">
+                <button className="center h-11 min-w-max ">
                   <img
                     src="/Spotify_icon.png" // path to your image
                     alt="export"
@@ -54,7 +54,7 @@ export default function Sidebar({ isSidebarOpen, getPlaylistById, history }) {
                   />
                 </button>
                 <button className="h-11 min-w-max flex items-center bg-quaternary rounded text-tertiary">
-                  <Trash size={28} className="text-primary" />
+                  <Trash size={28} className="text-primary" onClick={() => deletePlaylistById(playlist.id)} />
                 </button>
               </div>
             </div>

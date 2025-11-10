@@ -32,6 +32,16 @@ export default function MainPage() {
       console.error("Error fetching playlist:", error);
     }
   }
+  
+  async function deletePlaylistById(playlistID) {
+    try {
+      await api.delete(`/playlist/delete?id=${playlistID}`);
+      console.log("Deleted playlist with ID:", playlistID);
+      setPlaylistHistory(playlistHistory.filter(pl => pl.id !== playlistID));
+    } catch (error) {
+      console.error("Error deleting playlist:", error);
+    }
+  }
 
   async function exportPlaylist() {
     console.log("PlaylistID: ", currentPlaylistId);
@@ -90,7 +100,11 @@ export default function MainPage() {
   };
   return (
     <div className="flex relative">
-      <Sidebar isSidebarOpen={isSidebarOpen} getPlaylistById={fetchPlaylistById} history={playlistHistory}/>
+      <Sidebar isSidebarOpen={isSidebarOpen} 
+      getPlaylistById={fetchPlaylistById} 
+      history={playlistHistory}
+      deletePlaylistById={deletePlaylistById}
+      />
       <div
         className={`flex-1 transition-all duration-300 ${
           isSidebarOpen ? "ml-80" : "ml-0"

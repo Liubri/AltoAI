@@ -6,6 +6,7 @@ export async function historyRoute(req, res, user) {
     const playlists = await Playlist.find({ user: user._id }).sort({
       createdAt: -1,
     });
+
     res.status(200).json(
       playlists.map((pl) => ({
         id: pl._id,
@@ -37,5 +38,16 @@ export async function getPlaylistRoute(req, res, user) {
   } catch (err) {
     console.error("Error in /playlist/get:", err);
     res.status(500).send("❌ Failed to fetch playlist.");
+  }
+}
+
+export async function deletePlaylistRoute(req, res, user) {
+  try {
+    const id = req.query.id;
+    await Playlist.deleteOne({ user: user._id, _id: id });
+    res.status(200).send("✅ Playlist deleted successfully.");
+  } catch (err) {
+    console.error("Error in /playlist/delete:", err);
+    res.status(500).send("❌ Failed to delete playlist.");
   }
 }

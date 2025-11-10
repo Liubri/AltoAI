@@ -6,7 +6,7 @@ import { spotifyCallback, spotifyLogin, requireAuth, updateAccessToken } from ".
 import { checkValidSongs } from "./spotify/spotify.js";
 import connectDB from "./models/db.js";
 import { createPlaylistRoute, exportToSpotify} from "./spotify/routes.js";
-import { historyRoute, getPlaylistRoute } from "./playlist/routes.js";
+import { historyRoute, getPlaylistRoute, deletePlaylistRoute } from "./playlist/routes.js";
 import { User } from "./models/user.js";
 
 dotenv.config();
@@ -38,6 +38,7 @@ app.get("/callback", spotifyCallback);
 
 app.get("/history", requireAuth(historyRoute));
 app.get("/playlist/get", requireAuth(getPlaylistRoute));
+app.delete("/playlist/delete", requireAuth(deletePlaylistRoute));
 
 const PORT = 3000
 app.listen(PORT, () => {
