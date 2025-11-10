@@ -23,11 +23,11 @@ export default function SearchBar({sendInput}) {
           <div className="darkBorderBg"></div>
           <div className="darkBorderBg"></div>
           <div className="darkBorderBg"></div>
-          <div class="white"></div>
-          <div className="border"></div>
+          <div className="white"></div>
+          <div className="border-searchbar"></div>
         <input
           placeholder=" Type your prompt"
-          className="flex-grow rounded-lg px-3 py-2 bg-quaternary ml-1"
+          className="grow rounded-lg px-3 py-2 bg-quaternary ml-1"
           onChange={handleChange}
           onKeyDown={handleEnter}
         />

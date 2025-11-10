@@ -6,7 +6,7 @@ import MusicPlayer from "../components/MusicPlayer";
 import { single1, stats1, songs1 } from "../testData";
 import PlaylistStats from "../components/PlaylistStats";
 import Header from "../components/Header";
-import { Navigate } from "react-router-dom";
+import { data, Navigate } from "react-router-dom";
 import api from "../utils/api.js";
 import Sidebar from "../components/Sidebar";
 import { HistoryIcon } from "lucide-react";
@@ -20,6 +20,18 @@ export default function MainPage() {
   const [currentPlaylistId, setCurrentPlaylistId] = useState(null);
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playlistHistory, setPlaylistHistory] = useState([]);
+
+  async function fetchPlaylistById(playlistID) {
+    try {
+      const req = await api.get(`/playlist/get?id=${playlistID}`);
+      console.log("Playlist fetch request data:", req.data);
+      setSongs(req.data.tracks);
+      setCurrentPlaylistId(req.data.playlist_id);
+    } catch (error) {
+      console.error("Error fetching playlist:", error);
+    }
+  }
 
   async function exportPlaylist() {
     console.log("PlaylistID: ", currentPlaylistId);
@@ -34,8 +46,9 @@ export default function MainPage() {
       prompt: input,
       mode: selected,
     });
-    console.log("Response data:", req.data);
-    setSongs(req.data?.tracks ?? []);
+
+    setPlaylistHistory([{prompt: input, id: req.data.playlist_id, track_count: req.data.tracks.length, createdAt: new Date().toLocaleDateString(), title: req.data.title},...playlistHistory]);
+    setSongs(req.data.tracks);
     console.log(req.data);
     setCurrentPlaylistId(req.data.playlist_id);
     console.log("SetSongs: ", req.data);
@@ -51,6 +64,19 @@ export default function MainPage() {
     }
   }, [currentTrack]);
 
+  useEffect(() => {
+    async function fetchHistory() {
+      try {
+        const req = await api.get("/history");
+        setPlaylistHistory(req.data);
+        console.log("Fetched playlist history:", req.data);
+      } catch (error) {
+        console.error("Error fetching playlist history:", error);
+      }
+    }
+    fetchHistory();
+  }, [isPlaying]);
+
   if (!token) {
     console.log("FunctionCalled");
     console.log("✅ Login successful! Check console for tokens and user info.");
@@ -64,7 +90,7 @@ export default function MainPage() {
   };
   return (
     <div className="flex relative">
-      <Sidebar isSidebarOpen={isSidebarOpen} />
+      <Sidebar isSidebarOpen={isSidebarOpen} getPlaylistById={fetchPlaylistById} history={playlistHistory}/>
       <div
         className={`flex-1 transition-all duration-300 ${
           isSidebarOpen ? "ml-80" : "ml-0"

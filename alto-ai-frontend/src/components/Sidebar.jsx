@@ -1,5 +1,14 @@
 import { Trash } from "lucide-react";
-export default function Sidebar({ isSidebarOpen }) {
+export default function Sidebar({ isSidebarOpen, getPlaylistById, history }) {
+  function formatDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
   return (
     <aside
       className={`fixed left-0 top-0 h-screen w-80 border-r backdrop-blur-sm transition-transform duration-300 ease-in-out z-10 ${
@@ -15,23 +24,39 @@ export default function Sidebar({ isSidebarOpen }) {
 
         {/* Static example playlists */}
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
+          {history.map((playlist, i) => (
             <div
               key={i}
-              className="p-4 rounded-lg cursor-pointer border-gray-200 group"
+              className="p-4 rounded-lg cursor-pointer border border-secondary group hover:transform hover:scale-[1.05] transition-transform duration-200 hover:brightness-105 bg-secondary hover:shadow-lg"
+              onClick={() => {
+                console.log("Clicked playlist_id:", playlist.id);
+                getPlaylistById(playlist.id);
+              }}
             >
               <div>
-                <p className="font-medium text-sm mb-2 line-clamp-2 text-white-800">
-                  Example Playlist #{i}
+                <p className="font-medium text-xl mb-2 line-clamp-2 text-accent">
+                  {playlist.title}
                 </p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>10 tracks</span>
-                  <span>Oct 31, 2025</span>
+                <p className="text-xs mb-2 text-accent overflow-hidden wrap-break-word">
+                  {playlist.prompt}
+                </p>
+                <div className="flex items-center justify-between text-xs text-accent">
+                  <span>{playlist.track_count} tracks</span>
+                  <span>{formatDate(playlist.createdAt)}</span>
                 </div>
               </div>
-              <button className="mt-2 h-10 min-w-max flex items-center bg-gray-200 rounded text-gray-700">
-                <Trash size={25} />
-              </button>
+              <div className="flex justify-between opacity-0 transition-opacity ease-in-out group-hover:opacity-100 mt-2">
+                <button className="center h-10 min-w-max ">
+                  <img
+                    src="/Spotify_icon.png" // path to your image
+                    alt="export"
+                    className="w-6 h-6" // width, height, and spacing to the text
+                  />
+                </button>
+                <button className="h-11 min-w-max flex items-center bg-quaternary rounded text-tertiary">
+                  <Trash size={28} className="text-primary" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

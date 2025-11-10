@@ -94,14 +94,14 @@ input:focus {
   position: relative; /* parent for stacking */
 }
 
-.border {
+.border-searchbar {
   max-height: 59px;
   max-width: 303px;
   border-radius: 11px;
   filter: blur(0.5px);
 }
 
-.border::before {
+.border-searchbar::before {
   content: "";
   z-index: 0;
   text-align: center;
@@ -131,7 +131,7 @@ input:focus {
   transform: translate(-50%, -50%) rotate(-98deg);
 }
 
-#poda:hover > .border::before {
+#poda:hover > .border-searchbar::before {
   transform: translate(-50%, -50%) rotate(-110deg);
 }
 
@@ -143,7 +143,7 @@ input:focus {
   transform: translate(-50%, -50%) rotate(-97deg);
 }
 
-.darkBorderBg, .border, .glow, .white {
+.darkBorderBg, .border-searchbar, .glow, .white {
   max-height: 100px;
   max-width: 480px;
   height: 100%;

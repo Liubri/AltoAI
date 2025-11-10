@@ -232,10 +232,11 @@ export function parseSongsFromPrompt(prompt) {
     .filter((s) => s.length > 0); // remove empty strings
 }
 
-export async function addTracksToDatabase(tracks, user) {
+export async function addTracksToDatabase(tracks, user, prompt) {
   const playlist = await Playlist.create({
     user: user._id,
-    playlist: tracks.map(track => track._id)
+    playlist: tracks.map(track => track._id),
+    prompt: prompt
   });
 
 

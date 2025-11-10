@@ -47,7 +47,7 @@ export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL,
 
       <div className="text-center">
         <h4 className="font-semibold truncate">{name}</h4>
-        <p className="text-sm text-gray-700">{artist}</p>
+        <p className="text-sm text-quaternary">{artist}</p>
       </div>
 
       {/* --- Audio element --- */}
@@ -71,7 +71,7 @@ export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL,
           }}
           className="w-full h-1 rounded-lg appearance-none bg-tertiary accent-primary cursor-pointer"
         />
-        <div className="flex justify-between text-xs text-gray-700">
+        <div className="flex justify-between text-xs text-quaternary">
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>
         </div>
@@ -95,7 +95,7 @@ export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL,
         </button>
 
         <button
-          className="!p-2 rounded-full bg-violet-400 hover:bg-violet-500 transition flex items-center justify-center"
+          className="p-2! rounded-full bg-violet-400 hover:bg-violet-500 transition flex items-center justify-center"
           onClick={() => (audioRef.current.currentTime = duration)}
         >
           <SkipForward size={16} />

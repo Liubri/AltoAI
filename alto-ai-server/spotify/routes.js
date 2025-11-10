@@ -1,6 +1,6 @@
 import { checkValidSongs, parseSongsFromPrompt, addTracksToDatabase, addAllTracksToPlaylist } from "./spotify.js";
 import { updateAccessToken } from "./spotifyAuth.js";
-import { generatePlaylist } from "../openrouter.js";
+import { generatePlaylist } from "../ai/openrouter.js";
 import { Playlist } from "../models/playlist.js";
 
 export async function createPlaylistRoute(req, res, user) {
@@ -25,8 +25,8 @@ export async function createPlaylistRoute(req, res, user) {
             final_tracks = tracks.sort(() => Math.random() - 0.5);
         }
 
-        const retPlaylist = await addTracksToDatabase(final_tracks, user);
-        res.status(200).send({playlist_id: retPlaylist._id,tracks:final_tracks});
+        const retPlaylist = await addTracksToDatabase(final_tracks, user, prompt);
+        res.status(200).send({playlist_id: retPlaylist._id, tracks:final_tracks, prompt: prompt, title: retPlaylist.title});
         
     } catch (err) {
         console.error("Error in /createPlaylist:", err);
@@ -42,3 +42,4 @@ export async function exportToSpotify(req, res, user) {
     console.log("Added all tracks!");
     res.status(200)
 }
+
