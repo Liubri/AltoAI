@@ -1,14 +1,12 @@
 import { useState } from "react";
 
-export default function EditableTitle({ setPlaylistName }) {
+export default function EditableTitle({ playlistName, setPlaylistName }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState("Your Playlist");
   return (
     <div className="pl-4 mt-3">
       {isEditing ? (
         <input
-          value={title}
-          onInput={(e) => setTitle(e.target.value)}
+          value={playlistName}
           onChange={(e) => setPlaylistName(e.target.value)}
           onBlur={() => setIsEditing(false)} // stop editing when user clicks out
           autoFocus
@@ -19,7 +17,7 @@ export default function EditableTitle({ setPlaylistName }) {
           onClick={() => setIsEditing(true)}
           className="h-10 cursor-pointer text-lg hover:text-primary"
         >
-          {title}
+          { playlistName === "Alto-AI" ? "Your Playlist" : playlistName }
         </h2>
       )}
     </div>

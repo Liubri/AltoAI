@@ -15,7 +15,7 @@ export default function SearchBar({sendInput}) {
   };
 
   return (
-    <div className="w-[700px]">
+    <div className="w-[700px] shadow-md">
       <div className="bg-secondary backdrop-blur-sm flex flex-col gap-4 rounded-xl p-6">
         <p className="text-accent text-left">Describe your perfect playlist</p>
         <div id="poda" className="flex gap-3 relative items-center">

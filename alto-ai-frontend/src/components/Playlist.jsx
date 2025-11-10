@@ -3,7 +3,7 @@ import { songs1 } from "../testData";
 import { formatDuration } from "../pages/MainPage";
 import EditableText from "../components/EditableText";
 import { Edit } from "lucide-react";
-export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylist, setPlaylistName }) {
+export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylist, playlistName, setPlaylistName }) {
   function createSongCard(song, index) {
     return (
       <Song
@@ -24,9 +24,9 @@ export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylis
   
 
   return (
-    <div className="p-3">
+    <div className="p-3 drop-shadow-lg">
       <div className="flex justify-between mb-2">
-        <EditableText setPlaylistName={setPlaylistName} />
+        <EditableText playlistName={playlistName} setPlaylistName={setPlaylistName} />
         <button className="flex items-center" onClick={exportPlaylist}>
           <img
             src="/Spotify_icon.png" // path to your image

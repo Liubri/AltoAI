@@ -28,6 +28,7 @@ export default function MainPage() {
       console.log("Playlist fetch request data:", req.data);
       setSongs(req.data.tracks);
       setCurrentPlaylistId(req.data.playlist_id);
+      setPlaylistName(req.data.title);
     } catch (error) {
       console.error("Error fetching playlist:", error);
     }
@@ -60,6 +61,7 @@ export default function MainPage() {
 
     setPlaylistHistory([{prompt: input, id: req.data.playlist_id, track_count: req.data.tracks.length, createdAt: new Date().toLocaleDateString(), title: req.data.title},...playlistHistory]);
     setSongs(req.data.tracks);
+    setPlaylistName("Alto-AI");
     console.log(req.data);
     setCurrentPlaylistId(req.data.playlist_id);
     console.log("SetSongs: ", req.data);
@@ -131,12 +133,13 @@ export default function MainPage() {
           {songs.length > 0 && (
             <div className="flex w-full gap-8">
               {/* Left Column: Playlist */}
-              <div className="w-3/4 bg-secondary rounded-[1vh]">
+              <div className="w-3/4 bg-secondary rounded-[1vh] shadow-md">
                 <Playlist
                   songs={songs}
                   setPlay={setCurrentTrack}
                   handlePlaySong={setCurrentTrack}
                   exportPlaylist={exportPlaylist}
+                  playlistName={playlistName}
                   setPlaylistName={setPlaylistName}
                 />
               </div>
