@@ -2,84 +2,21 @@ import spotifyAxios from "./spotifyAxios.js";
 import pLimit from "p-limit";
 import dotenv from "dotenv"
 import spotifyPreviewFinder from "spotify-preview-finder";
-import {Song} from "../models/song.js";
+import { Song } from "../models/song.js";
 import { Playlist } from "../models/playlist.js";
+import { User } from "../models/user.js";
+import { searchAI } from "../search/aiSearch.js";
+import { searchArtist } from "../search/artistSearch.js";
+import { searchTrack } from "../search/songSearch.js";
 
-async function searchTrack(song, token) {
-  try {
-    // Search Spotify first
-    const spotifyRes = await spotifyAxios.get(
-      `/v1/search?q=${encodeURIComponent(song)}&type=track&limit=3`,
-      { headers: { Authorization: `Bearer ${token}` } }
+export async function spotifySearch(user, q, type, limit) {
+    return await spotifyAxios.get(
+      `/v1/search?q=${encodeURIComponent(q)}&type=${type}&limit=${limit}`,
+      { user: user }
     );
-    const track = spotifyRes.data.tracks.items[0];
-    if (!track) return null;
-
-    // Search iTunes using Spotify track info
-    return await getMusicPreview(track);
-  } catch (err) {
-    console.log(`No match for ${song}`, err);
-    return null;
-  }
 }
 
-export async function searchRandomTrack(song, token, spotifyLimit = 20) {
-  try {
-    // Search Spotify with the given limit
-    const spotifyRes = await spotifyAxios.get(
-      `/v1/search?q=${encodeURIComponent(song)}&type=track&limit=${spotifyLimit}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    const tracks = spotifyRes.data.tracks.items;
-    if (!tracks || tracks.length === 0) return [];
-
-    // Fetch previews
-    const results = await Promise.all(
-      tracks.map(getMusicPreview)
-    );
-    return results;
-  } catch (err) {
-    console.log(`No match for ${song}`, err);
-    return [];
-  }
-}
-
-export async function getRandomTracksByArtist(artistName, token) {
-  try {
-    // Search Spotify for tracks by artist
-    const limit = 20;
-    const query = encodeURIComponent(`artist:${artistName}`);
-    const res = await spotifyAxios.get(`/v1/search?q=${query}&type=track&limit=${limit}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const tracks = res.data.tracks.items;
-
-    // If no tracks found, fallback to random track search
-    if (!tracks || tracks.length === 0) {
-      return searchRandomTrack(artistName, token, limit);
-    }
-
-    // console.log(tracks);
-    const results = await Promise.all(
-      tracks.map(getMusicPreview)
-    );
-
-    return results;
-  } catch (err) {
-    console.error(`Failed to get tracks for ${artistName}:`, err.message);
-    return [];
-  }
-}
-
-// const selectedWithPreviews = await Promise.all(selected.map(getMusicPreview));
-export async function getMusicPreview(track) {
-  //If Song is in the database return it
-  const songData = await Song.findOne({ id: track.id });
-  if (songData) {
-    return songData;
-  }
+async function getMusicPreview(track) {
   let preview = null;
 
   // Try Spotify preview first
@@ -103,6 +40,22 @@ export async function getMusicPreview(track) {
     }
   }
 
+  return preview;
+}
+
+export async function addSongToDB(track) {
+  //If Song is in the database return it
+  const songData = await Song.findOne({ id: track.id });
+  if (songData) {
+    return songData;
+  }
+
+  const preview = await getMusicPreview(track);
+  if (!preview) {
+    console.warn(`No preview found for ${track.name}, skipping song.`);
+    return null;
+  }
+
   const newSongData = {
     title: track.name,
     artist: track.artists.map(a => a.name).join(", "),
@@ -111,7 +64,7 @@ export async function getMusicPreview(track) {
     id: track.id,
     image: track.album.images?.[0]?.url || null,
     duration: track.duration_ms,
-    preview,
+    preview: preview,
   };
 
   //Put Song in database
@@ -120,7 +73,6 @@ export async function getMusicPreview(track) {
   });
 
   return song;
-      
 }
 
 function takeRandom(arr) {
@@ -129,18 +81,19 @@ function takeRandom(arr) {
 }
 
 async function addTrackToArray(user, playlist, mode) {
-  const limit = pLimit(10); // max 5 concurrent searches
+  const limit = pLimit(10);
   let searchPromises;
   if (mode === "artist"){
     searchPromises = playlist.map((item) =>
-      limit(() => getRandomTracksByArtist(item, user.accessToken)));
+      limit(() => searchArtist(user, item)));
   }
   else if (mode === "specific") {
       searchPromises = playlist.map((item) =>
-      limit(() => searchTrack(item, user.accessToken)));
+      limit(() => searchTrack(user, item)));
   } else {
+      const usedPlaylists = [];
       searchPromises = playlist.map((item) =>
-      limit(() => searchRandomTrack(item, user.accessToken)));
+      limit(() => searchAI(user, item, usedPlaylists)));
   }
 
   // wait for all results
@@ -150,7 +103,8 @@ async function addTrackToArray(user, playlist, mode) {
     const validTracks = []
     for (let i = 0; i < results.length; i++) {
       let needToAdd = Math.ceil(10 / results.length);
-      while(needToAdd > 0){
+      let iteration = 0;
+      while(needToAdd > 0 && iteration < 20){
         const track = takeRandom(results[i]);
         // console.log("Selected Track: ", track.title ?? "artist", validTracks.map(t => t.title + " - " + t.artist));
         if(track !== null && validTracks.filter(t => t.title === track.title && t.artist === track.artist).length === 0){
@@ -167,7 +121,8 @@ async function addTrackToArray(user, playlist, mode) {
   }
 }
 
-async function createPlaylist(userId, name, token) {
+async function createPlaylist(user, name) {
+  const userId = await User.findById(user._id).then(u => u.spotifyId);  
   const res = await spotifyAxios.post(
     `/v1/users/${userId}/playlists`,
     {
@@ -176,28 +131,21 @@ async function createPlaylist(userId, name, token) {
       description: "Generated by AltoAI",
     },
     {
-      headers: { Authorization: `Bearer ${token}` },
+      user: user,
     }
   );
   return res.data.id; // Returns the new playlist ID
 }
 
-export async function addAllTracksToPlaylist(trackURIs, token, playlistName) {
+export async function addAllTracksToPlaylist(user, trackURIs, playlistName) {
   try {
-    // Step 1: get current user profile to find userId
-    const userRes = await spotifyAxios.get("/v1/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const userId = userRes.data.id;
-
-    // Step 2: create a new playlist
-    const playlistId = await createPlaylist(userId, playlistName, token);
+    const playlistId = await createPlaylist(user, playlistName);
 
     // Step 3: add all tracks from array
     const addRes = await spotifyAxios.post(
       `/v1/playlists/${playlistId}/tracks`,
       { uris: trackURIs },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { user: user },
     );
 
     console.log("Tracks added:", addRes.status === 201 ? "✅" : "❌");

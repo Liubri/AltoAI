@@ -1,11 +1,10 @@
 import { checkValidSongs, parseSongsFromPrompt, addTracksToDatabase, addAllTracksToPlaylist } from "./spotify.js";
-import { updateAccessToken } from "./spotifyAuth.js";
 import { generatePlaylist } from "../ai/openrouter.js";
 import { Playlist } from "../models/playlist.js";
+import { searchTrack, } from "../search/songSearch.js";
 
 export async function createPlaylistRoute(req, res, user) {
     try {
-        await updateAccessToken(user);
         const { prompt, mode } = req.body;
         console.log("Prompt:", prompt, "Mode:", mode);
 
@@ -35,7 +34,6 @@ export async function createPlaylistRoute(req, res, user) {
 }
 
 export async function exportToSpotify(req, res, user) {
-    await updateAccessToken(user);
     const { playlist_id, playlist_name } = req.body;
     const playlist = await Playlist.findById(playlist_id).populate("playlist");
     if (playlist_name && playlist.title !== playlist_name) {
@@ -43,7 +41,7 @@ export async function exportToSpotify(req, res, user) {
       await playlist.save();
       console.log(`✅ Playlist name updated to "${playlist_name}"`);
     }
-    await addAllTracksToPlaylist(playlist.playlist.map((track)=>track.uri), user.accessToken, playlist_name);
+    await addAllTracksToPlaylist(user, playlist.playlist.map((track)=>track.uri), playlist_name);
     res.sendStatus(200);
     console.log("Added all tracks!");
     res.status(200)

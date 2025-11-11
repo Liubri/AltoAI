@@ -22,7 +22,7 @@ export async function getAIRequest(req, res) {
 
 export async function generatePlaylist(prompt) {
   const response = await client.chat.completions.create({
-    model: "nvidia/nemotron-nano-9b-v2:free",
+    model: "meta-llama/llama-3.3-8b-instruct:free",
     messages: [
       {
         role: "system",

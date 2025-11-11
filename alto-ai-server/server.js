@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { getAIRequest, generatePlaylist } from "./ai/openrouter.js";
 import dotenv from "dotenv";
-import { spotifyCallback, spotifyLogin, requireAuth, updateAccessToken } from "./spotify/spotifyAuth.js";
+import { spotifyCallback, spotifyLogin, requireAuth } from "./spotify/spotifyAuth.js";
 import { checkValidSongs } from "./spotify/spotify.js";
 import connectDB from "./models/db.js";
 import { createPlaylistRoute, exportToSpotify} from "./spotify/routes.js";

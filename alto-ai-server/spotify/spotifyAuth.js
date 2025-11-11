@@ -86,8 +86,9 @@ export async function spotifyCallback(req, res) {
   }
 }
 
-export async function updateAccessToken(user) {
-  if (new Date() < user.tokenExpiresAt) return;
+
+export async function getAccessToken(user) {
+  if (new Date() < user.tokenExpiresAt) return user.accessToken;
 
   const res = await axios.post(
     "https://accounts.spotify.com/api/token",
@@ -107,6 +108,7 @@ export async function updateAccessToken(user) {
   user.accessToken = res.data.access_token;
   user.tokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
   await user.save();
+  return user.accessToken;
 }
 
 export async function getUserFromToken(token) {
