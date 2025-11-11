@@ -46,7 +46,7 @@ export default function Sidebar({ isSidebarOpen, getPlaylistById, deletePlaylist
                 </div>
               </div>
               <div className="flex justify-between opacity-0 transition-opacity ease-in-out group-hover:opacity-100 mt-2">
-                <button className="center h-11 min-w-max bg-quaternary">
+                <button className="center h-11 min-w-max bg-quaternary outline-2 outline-transparent hover:outline-accent">
                   <img
                     src="/Spotify_icon.png" // path to your image
                     alt="export"
@@ -54,7 +54,7 @@ export default function Sidebar({ isSidebarOpen, getPlaylistById, deletePlaylist
                     onClick={() => exportPlaylist(playlist.id)}
                   />
                 </button>
-                <button className="h-11 min-w-max flex items-center bg-quaternary rounded text-tertiary">
+                <button className="h-11 min-w-max flex items-center bg-quaternary rounded text-tertiary outline-2 outline-transparent hover:outline-accent">
                   <Trash size={28} className="text-primary" onClick={() => deletePlaylistById(playlist.id)} />
                 </button>
               </div>

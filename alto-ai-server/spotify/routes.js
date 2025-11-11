@@ -44,6 +44,7 @@ export async function exportToSpotify(req, res, user) {
       console.log(`✅ Playlist name updated to "${playlist_name}"`);
     }
     await addAllTracksToPlaylist(playlist.playlist.map((track)=>track.uri), user.accessToken, playlist_name);
+    res.sendStatus(200);
     console.log("Added all tracks!");
     res.status(200)
 }

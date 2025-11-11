@@ -17,7 +17,7 @@ export default function SearchBar({ sendInput, isLoading }) {
   };
 
   return (
-    <div className="w-[700px] shadow-md">
+    <div className="w-[700px] shadow-md rounded-xl">
       <div className="bg-secondary backdrop-blur-sm flex flex-col gap-4 rounded-xl p-6">
         <p className="text-accent text-left">Describe your perfect playlist</p>
         <div id="poda" className="flex gap-3 relative items-center">
@@ -34,7 +34,7 @@ export default function SearchBar({ sendInput, isLoading }) {
             onKeyDown={handleEnter}
           />
           <button
-            className={`text-accent bg-quaternary ${
+            className={`text-accent bg-quaternary outline-2 outline-transparent hover:outline-accent ${
               isLoading ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={() => sendInput(input, selected)}

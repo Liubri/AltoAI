@@ -44,11 +44,13 @@ export default function MainPage() {
   }
 
   async function exportPlaylist(playlistID = null) {
+    setIsLoading(true);
     const idToUse = playlistID ?? currentPlaylistId;
     await api.post("/spotify/exportPlaylist", {
       playlist_id: idToUse,
       playlist_name: playlistName,
     });
+    setIsLoading(false);
   }
 
   async function sendInput(input, selected) {
@@ -117,7 +119,7 @@ export default function MainPage() {
           {/* Sidebar Toggle Button */}
           <div className="flex items-center mb-4">
             <button
-              className="!p-0 w-15 h-15 flex items-center justify-center bg-quaternary border-gray-300 rounded-lg transition-all backdrop-blur-sm"
+              className="!p-0 w-15 h-15 flex items-center outline-2 outline-transparent hover:outline-accent justify-center bg-quaternary border-gray-300 rounded-lg transition-all backdrop-blur-sm"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
             <HistoryIcon />
