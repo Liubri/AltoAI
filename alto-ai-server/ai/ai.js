@@ -1,18 +1,19 @@
 import OpenAI from "openai"
 import dotenv from "dotenv"
+import fs from "node:fs";
+import models from "./models.js";
+
+const defaultModel = "Ollama";
 
 dotenv.config()
-const client = new OpenAI({
-	baseURL: "https://router.huggingface.co/v1",
-	apiKey: process.env.HF_TOKEN,
-});
+
 
 export async function getAIRequest(req, res, user) {
   const prompt = req.query.prompt
   try {
     const playlist = await generatePlaylist(prompt);
     console.log("Generated playlist:", playlist);
-    console.log(Array.isArray(playlist)); // true
+    console.log(Array.isArray(playlist)); 
     res.json({playlist});
   } catch (err) {
     console.error(err);
@@ -20,22 +21,22 @@ export async function getAIRequest(req, res, user) {
   }
 }
 
-export async function generatePlaylist(prompt) {
-  const response = await client.chat.completions.create({
-    model: "openai/gpt-oss-20b:nebius",
+export async function generatePlaylist(prompt, ai=models[defaultModel]) {
+  const response = await ai.client.chat.completions.create({
+    model:ai.model,
     messages: [
-      { role: "system", content: "You are a multilingual music recommendation assistant." },
-      { role: "user", content: `Generate a playlist of 10 songs for: ${prompt}
-      Return **ONLY** a JSON array in this exact format:
-      [
-     { "title": "Song Name", "artist": "Artist Name" }
-    ]
-    Do not include any explanations or text.` }
+      {
+        role: "system",
+        content: fs.readFileSync(new URL("./prompt.txt", import.meta.url), "utf-8"),
+      },
+      {
+        role: "user",
+        content: `You are a Spotify search prompt generator. "${prompt}"`,
+      },
     ],
-    temperature: 0.7
+    temperature: ai.temperature
   });
-  const playlistJSON = response.choices[0].message.content;
-  console.log(JSON.stringify(response.choices[0].message));
-  console.log(response);
-  return JSON.parse(playlistJSON);
+  let playlistJSON = JSON.parse(response.choices[0].message.content.trim());
+  console.log(playlistJSON);
+  return playlistJSON;
 }

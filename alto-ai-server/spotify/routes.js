@@ -1,5 +1,5 @@
 import { checkValidSongs, parseSongsFromPrompt, addTracksToDatabase, addAllTracksToPlaylist } from "./spotify.js";
-import { generatePlaylist } from "../ai/openrouter.js";
+import { generatePlaylist } from "../ai/ai.js";
 import { Playlist } from "../models/playlist.js";
 import { searchTrack, } from "../search/songSearch.js";
 

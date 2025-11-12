@@ -1,13 +1,11 @@
 import express from "express";
 import cors from "cors";
-import { getAIRequest, generatePlaylist } from "./ai/openrouter.js";
+import { getAIRequest } from "./ai/ai.js";
 import dotenv from "dotenv";
 import { spotifyCallback, spotifyLogin, requireAuth } from "./spotify/spotifyAuth.js";
-import { checkValidSongs } from "./spotify/spotify.js";
 import connectDB from "./models/db.js";
 import { createPlaylistRoute, exportToSpotify} from "./spotify/routes.js";
 import { historyRoute, getPlaylistRoute, deletePlaylistRoute } from "./playlist/routes.js";
-import { User } from "./models/user.js";
 
 dotenv.config();
 const app = express();
@@ -19,13 +17,7 @@ connectDB(process.env.MONGO_URI);
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from Node.js!" });
 });
-// const songs = [
-//   { title: "怪物", artist: "YOASOBI" },
-//   { title: "アイドル", artist: "YOASOBI" },
-//   { title: "群青", artist: "YOASOBI" },
-//   { title: "夜に駆ける", artist: "YOASOBI" },
-//   { title: "告白氣球", artist: "" },
-// ];
+
 app.post("/spotify/createPlaylist", requireAuth(createPlaylistRoute));
 
 app.post("/spotify/exportPlaylist", requireAuth(exportToSpotify))
