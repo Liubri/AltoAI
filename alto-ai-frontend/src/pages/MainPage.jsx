@@ -32,6 +32,13 @@ export default function MainPage() {
         },
       });
       setSongs((prev) => prev.filter((song) => song._id !== id));
+      setPlaylistHistory(prev =>
+        prev.map(playlist =>
+          playlist.id === currentPlaylistId
+            ? { ...playlist, track_count: playlist.track_count - 1 }
+            : playlist
+        )
+      );
     } catch (error) {
       console.error("Error deleting song:", error);
     }

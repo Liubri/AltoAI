@@ -19,7 +19,7 @@ export default function Playlist({
         initial={{ opacity: 0, scale: 0.95, y: -5 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.6, height: 0, margin: 0, padding: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <Song
           name={song.title}

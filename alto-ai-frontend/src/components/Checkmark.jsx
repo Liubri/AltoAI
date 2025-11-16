@@ -1,9 +1,11 @@
-export default function Checkmark({ name, checked, onChange, disabled }) {
+import { Tooltip } from 'react-tooltip'
+export default function Checkmark({ name, checked, onChange, disabled, ...props }) {
   return (
     <label
       className={`relative flex items-center cursor-pointer select-none text-lg ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
+      {...props} // pass down data-tooltip
     >
       {/* Hidden native checkbox */}
       <input
