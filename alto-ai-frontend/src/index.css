@@ -10,6 +10,7 @@
 
 @theme {
   --color-primary: #79B791;
+  /* --color-primary: #778873; */
   --color-secondary: #ABD1B5;
   --color-tertiary: #51291E;
   --color-quaternary: #301014;
@@ -25,11 +26,11 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background: linear-gradient(to bottom right,
+    var(--color-accent),
     var(--color-primary),
-    var(--color-secondary),
     var(--color-tertiary)
   );
-
+  /* background-color: var(--color-primary); */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -107,8 +108,8 @@ input:focus {
 }
 
 .border-searchbar {
-  max-height: 59px;
-  max-width: 303px;
+  /* max-height: 59px; */
+  /* max-width: 303px; */
   border-radius: 11px;
   filter: blur(0.5px);
 }
@@ -156,8 +157,8 @@ input:focus {
 }
 
 .darkBorderBg, .border-searchbar, .glow, .white {
-  max-height: 100px;
-  max-width: 480px;
+  /* max-height: 100px; */
+  /* max-width: 480px; */
   height: 100%;
   width: 100%;
   position: absolute;
@@ -166,6 +167,7 @@ input:focus {
   /* Border Radius */
   border-radius: 12px;
   filter: blur(3px);
+  inset: 0;
 }
 
 .darkBorderBg::before {
@@ -192,8 +194,8 @@ input:focus {
 }
 
 .white {
-  max-height: 63px;
-  max-width: 480px;
+  /* max-height: 63px; */
+  /* max-width: 480px; */
   border-radius: 10px;
   filter: blur(2px);
   z-index: 1;

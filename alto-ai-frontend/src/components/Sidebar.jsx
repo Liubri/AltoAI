@@ -17,7 +17,7 @@ export default function Sidebar({ isSidebarOpen, getPlaylistById, deletePlaylist
     >
       <div className="h-screen overflow-y-auto p-4 space-y-4">
         <div className="flex items-center justify-between mb-6 pt-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
+          <h2 className="text-tertiary text-lg font-semibold flex items-center gap-2">
             History
           </h2>
         </div>

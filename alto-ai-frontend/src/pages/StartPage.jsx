@@ -7,7 +7,7 @@ export default function StartPage() {
   }
 
   return (
-    <div className="absolute inset-0 bg-linear-to-br from-primary via-secondary to-tertiary flex items-center justify-center">
+    <div className="absolute inset-0 bg-linear-to-br from-accent via-primary to-tertiary flex items-center justify-center">
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-12">
         {/* Header */}
         <div className="text-center space-y-8 max-w-4xl">
@@ -31,7 +31,7 @@ export default function StartPage() {
             <button
               onClick={handleLogin}
               size="lg"
-              className="flex justify-center bg-primary text-accent px-12 py-6 !rounded-full shadow-xl shadow-primary/30 transition-all hover:scale-105 hover:bg-secondary"
+              className="flex justify-center bg-quaternary text-accent px-12 py-6 !rounded-full shadow-xl shadow-primary/30 transition-all hover:scale-105 hover:bg-secondary"
             >
               <svg
                 className="w-6 h-6 mr-3"

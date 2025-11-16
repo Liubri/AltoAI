@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import fs from "node:fs";
 import models from "./models.js";
 
-const defaultModel = "OpenRouter";
+const defaultModel = "nvidia";
 
 dotenv.config()
 
@@ -21,9 +21,11 @@ export async function getAIRequest(req, res, user) {
   }
 }
 
-export async function generatePlaylist(prompt, ai=models[defaultModel]) {
-  const response = await ai.client.chat.completions.create({
-    model:ai.model,
+export async function generatePlaylist(prompt, ai) {
+  const aiModel = models[ai || defaultModel];
+  console.log("Using this model: ", aiModel.model);
+  const response = await aiModel.client.chat.completions.create({
+    model:aiModel.model,
     messages: [
       {
         role: "system",
@@ -34,7 +36,7 @@ export async function generatePlaylist(prompt, ai=models[defaultModel]) {
         content: `You are a Spotify search prompt generator. "${prompt}"`,
       },
     ],
-    temperature: ai.temperature
+    temperature: aiModel.temperature
   });
   let playlistJSON = JSON.parse(response.choices[0].message.content.trim());
   console.log(playlistJSON);

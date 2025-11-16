@@ -10,6 +10,7 @@ import { data, Navigate } from "react-router-dom";
 import api from "../utils/api.js";
 import Sidebar from "../components/Sidebar";
 import { HistoryIcon } from "lucide-react";
+import { Nvidia, DeepSeek, OpenAI, Qwen } from "@lobehub/icons";
 
 export default function MainPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,6 +23,30 @@ export default function MainPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playlistHistory, setPlaylistHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedAI, setSelectedAI] = useState("nvidia");
+
+  const options = [
+    {
+      name: "nvidia",
+      label: "Nemotron Nano 9B",
+      icon: <Nvidia.Color size={25} />,
+    },
+    {
+      name: "deepseek",
+      label: "DeepSeek V3.1",
+      icon: <DeepSeek.Color size={25} />,
+    },
+    {
+      name: "openai",
+      label: "Gpt-oss-20b",
+      icon: <OpenAI size={25} />,
+    },
+    {
+      name: "qwen",
+      label: "Qwen3 4B",
+      icon: <Qwen size={25} />,
+    },
+  ];
 
   async function handleDeleteSong(id) {
     try {
@@ -32,8 +57,8 @@ export default function MainPage() {
         },
       });
       setSongs((prev) => prev.filter((song) => song._id !== id));
-      setPlaylistHistory(prev =>
-        prev.map(playlist =>
+      setPlaylistHistory((prev) =>
+        prev.map((playlist) =>
           playlist.id === currentPlaylistId
             ? { ...playlist, track_count: playlist.track_count - 1 }
             : playlist
@@ -98,6 +123,7 @@ export default function MainPage() {
     const req = await api.post("/spotify/createPlaylist", {
       prompt: input,
       mode: selected,
+      ai: selectedAI,
     });
     setSongs(req.data.tracks);
     setPlaylistHistory((prev) => [
@@ -179,6 +205,8 @@ export default function MainPage() {
               sendInput={sendInput}
               setCurrentPlaylistId={setCurrentPlaylistId}
               isLoading={isLoading}
+              options={options}
+              setSelectedAI={setSelectedAI}
             />
           </div>
           {songs.length > 0 && (

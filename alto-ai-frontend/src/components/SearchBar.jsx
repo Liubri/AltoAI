@@ -1,8 +1,14 @@
 import { useState } from "react";
 import CheckmarkGroup from "./CheckmarkGroup.jsx";
 import Loader from "./Loader.jsx";
+import Dropdown from "./Dropdown.jsx";
 
-export default function SearchBar({ sendInput, isLoading }) {
+export default function SearchBar({
+  sendInput,
+  isLoading,
+  options,
+  setSelectedAI,
+}) {
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState(null); // "specific" or "artist" or "ai"
 
@@ -17,22 +23,24 @@ export default function SearchBar({ sendInput, isLoading }) {
   };
 
   return (
-    <div className="w-[700px] shadow-md rounded-xl">
+    <div className="w-[837px] shadow-md rounded-xl z-10">
       <div className="bg-secondary backdrop-blur-sm flex flex-col gap-4 rounded-xl p-6">
         <p className="text-accent text-left">Describe your perfect playlist</p>
-        <div id="poda" className="flex gap-3 relative items-center">
-          <div className="glow"></div>
-          <div className="darkBorderBg"></div>
-          <div className="darkBorderBg"></div>
-          <div className="darkBorderBg"></div>
-          <div className="white"></div>
-          <div className="border-searchbar"></div>
-          <input
-            placeholder=" Type your prompt"
-            className="grow rounded-lg px-3 py-2 bg-quaternary ml-1"
-            onChange={handleChange}
-            onKeyDown={handleEnter}
-          />
+        <div className="flex gap-1 items-center">
+          <div id="poda" className="grow flex relative items-center">
+            <div className="glow"></div>
+            <div className="darkBorderBg"></div>
+            <div className="darkBorderBg"></div>
+            <div className="darkBorderBg"></div>
+            <div className="white"></div>
+            <div className="border-searchbar"></div>
+            <input
+              placeholder=" Type your prompt"
+              className="w-full rounded-lg px-3 py-2 bg-quaternary ml-2 mr-2"
+              onChange={handleChange}
+              onKeyDown={handleEnter}
+            />
+          </div>
           <button
             className={`text-accent bg-quaternary outline-2 outline-transparent hover:outline-accent ${
               isLoading ? "opacity-50 cursor-not-allowed" : ""
@@ -42,8 +50,13 @@ export default function SearchBar({ sendInput, isLoading }) {
           >
             Generate playlist
           </button>
+          <Dropdown
+            label="Options"
+            options={options}
+            setSelectedAI={setSelectedAI}
+          />
         </div>
-        <div className="flex items-center justify-between h-[50px">
+        <div className="flex items-center justify-between">
           <CheckmarkGroup
             className="text-accent"
             selected={selected}

@@ -5,15 +5,15 @@ import { searchTrack, } from "../search/songSearch.js";
 
 export async function createPlaylistRoute(req, res, user) {
     try {
-        const { prompt, mode } = req.body;
-        console.log("Prompt:", prompt, "Mode:", mode);
+        const { prompt, mode , ai} = req.body;
+        console.log("Prompt:", prompt, "Mode:", mode, "AI:", ai);
 
         let playlist;
         if (mode === "specific" || mode === "artist") {
             playlist = parseSongsFromPrompt(prompt)
         } else {
             // Default fallback
-            playlist = await generatePlaylist(prompt);
+            playlist = await generatePlaylist(prompt, ai);
         }
 
         console.log("🎵 Generated playlist for Spotify:", playlist);

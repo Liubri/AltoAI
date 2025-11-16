@@ -4,30 +4,38 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const models = {
-     HF: {
-        client: new OpenAI({
-        baseURL: "https://router.huggingface.co/v1",
-        apiKey: process.env.HF_TOKEN,
-        }),
-        model: "openai/gpt-oss-20b:nebius",
-        temperature: 0.7,
-    },
-    OpenRouter: {
+    nvidia: {
         client: new OpenAI({
             baseURL: "https://openrouter.ai/api/v1",
             apiKey: process.env.OR_TOKEN,
         }),
-        model: "meta-llama/llama-3.3-8b-instruct:free",
+        model: "nvidia/nemotron-nano-12b-v2-vl:free",
         temperature: 0.7,
     },
-    Ollama: {
+    deepseek: {
         client: new OpenAI({
-            baseURL: 'http://localhost:11434/v1',
-            apiKey: 'ollama',
+            baseURL: "https://openrouter.ai/api/v1",
+            apiKey: process.env.OR_TOKEN,
         }),
-        model: "gpt-oss:20b",
+        model: "deepseek/deepseek-chat-v3.1:free",
         temperature: 0.7,
-    }
+    },
+    openai: {
+        client: new OpenAI({
+            baseURL: "https://openrouter.ai/api/v1",
+            apiKey: process.env.OR_TOKEN,
+        }),
+        model: "openai/gpt-oss-20b:free",
+        temperature: 0.7,
+    },
+    qwen: {
+        client: new OpenAI({
+            baseURL: "https://openrouter.ai/api/v1",
+            apiKey: process.env.OR_TOKEN,
+        }),
+        model: "qwen/qwen3-4b:free",
+        temperature: 0.7,
+    },
 };
 
 export default models;

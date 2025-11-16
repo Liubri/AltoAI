@@ -1,4 +1,3 @@
-import { Tooltip } from 'react-tooltip'
 export default function Checkmark({ name, checked, onChange, disabled, ...props }) {
   return (
     <label
