@@ -1,4 +1,4 @@
-ximport OpenAI from "openai";
+import OpenAI from "openai";
 import dotenv from "dotenv";
 import fs from "node:fs";
 

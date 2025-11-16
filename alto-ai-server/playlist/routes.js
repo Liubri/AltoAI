@@ -1,4 +1,3 @@
-import { populate } from "dotenv";
 import { Playlist } from "../models/playlist.js";
 
 export async function historyRoute(req, res, user) {

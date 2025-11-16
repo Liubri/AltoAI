@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import fs from "node:fs";
 import models from "./models.js";
 
-const defaultModel = "Ollama";
+const defaultModel = "OpenRouter";
 
 dotenv.config()
 

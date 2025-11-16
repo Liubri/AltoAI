@@ -3,7 +3,7 @@ import { songs1 } from "../testData";
 import { formatDuration } from "../pages/MainPage";
 import EditableText from "../components/EditableText";
 import { Edit } from "lucide-react";
-export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylist, playlistName, setPlaylistName }) {
+export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylist, playlistName, setPlaylistName , onDeleteSong}) {
   function createSongCard(song, index) {
     return (
       <Song
@@ -17,6 +17,7 @@ export default function Playlist({ songs, setPlay, handlePlaySong, exportPlaylis
           setPlay(song);
           handlePlaySong(song);
         }}
+        onDelete={() => onDeleteSong(song._id)}
       />
     );
   }

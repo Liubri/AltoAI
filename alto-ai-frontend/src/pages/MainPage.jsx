@@ -23,6 +23,20 @@ export default function MainPage() {
   const [playlistHistory, setPlaylistHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  async function handleDeleteSong(id) {
+    try {
+      await api.delete(`/playlist/song/delete`, {
+        data: {
+          id,
+          playlistId: currentPlaylistId,
+        },
+      });
+      setSongs((prev) => prev.filter((song) => song._id !== id));
+    } catch (error) {
+      console.error("Error deleting song:", error);
+    }
+  }
+
   async function fetchPlaylistById(playlistID) {
     try {
       const req = await api.get(`/playlist/get?id=${playlistID}`);
@@ -144,6 +158,7 @@ export default function MainPage() {
                   exportPlaylist={exportPlaylist}
                   playlistName={playlistName}
                   setPlaylistName={setPlaylistName}
+                  onDeleteSong={handleDeleteSong}
                 />
               </div>
 

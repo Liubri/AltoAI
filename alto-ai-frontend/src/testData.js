@@ -1,38 +1,38 @@
 export const songs1 = [
   {
     id: 1,
-    name: "夜に駆ける (Yoru ni Kakeru)",
+    title: "夜に駆ける (Yoru ni Kakeru)",
     artist: "YOASOBI",
     imgURL: "https://i.scdn.co/image/ab67616d0000b273c1d0f4e4f6557cfb1092fb7b",
-    duration: "4:21",
+    duration: "261000",
   },
   {
     id: 2,
-    name: "群青 (Gunjou)",
+    title: "群青 (Gunjou)",
     artist: "YOASOBI",
     imgURL: "https://i.scdn.co/image/ab67616d0000b2730a1b3dfccc092a68f2cbd41f",
-    duration: "4:08",
+    duration: "248000",
   },
   {
     id: 3,
-    name: "アンコール (Encore)",
+    title: "アンコール (Encore)",
     artist: "YOASOBI",
     imgURL: "https://i.scdn.co/image/ab67616d0000b2737a31b5b06bc980b2fda7a19d",
-    duration: "4:33",
+    duration: "273000",
   },
   {
     id: 4,
-    name: "祝福 (Shukufuku)",
+    title: "祝福 (Shukufuku)",
     artist: "YOASOBI",
     imgURL: "https://i.scdn.co/image/ab67616d0000b273ddcd2f90c9a9ffe65cde38bd",
-    duration: "3:16",
+    duration: "196000",
   },
   {
     id: 5,
-    name: "アイドル (Idol)",
+    title: "アイドル (Idol)",
     artist: "YOASOBI",
     imgURL: "https://i.scdn.co/image/ab67616d0000b273d315ff78eaefdd8f2fa2e353",
-    duration: "3:33",
+    duration: "213000",
   },
 ];
 
