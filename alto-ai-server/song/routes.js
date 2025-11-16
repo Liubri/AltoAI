@@ -31,7 +31,7 @@ export async function addSongRoute(req, res, user) {
       limit(() => searchTrack(user, item)));
     const results = await Promise.all(searchPromises);
     const trackIds = results.map(track => track._id);
-    const playlist = await Playlist.findOne({ user: user._id, _id: playlistId }).populate("playlist");
+    const playlist = await Playlist.findOne({ user: user._id, _id: playlistId });
     playlist.playlist.push(...trackIds);
     await playlist.save();
     await playlist.populate("playlist");

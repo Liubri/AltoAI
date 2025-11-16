@@ -1,13 +1,21 @@
 @import "tailwindcss";
 
-
-@theme {
+/* @theme {
   --color-primary: #777C6D;
   --color-secondary: #B7B89F;
   --color-tertiary: #CBCBCB;
   --color-quaternary: #232C33;
   --color-accent: #EEEEEE;
+} */
+
+@theme {
+  --color-primary: #79B791;
+  --color-secondary: #ABD1B5;
+  --color-tertiary: #51291E;
+  --color-quaternary: #301014;
+  --color-accent: #EDF4ED;
 }
+
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -263,6 +271,15 @@ input:focus {
 
 .animate-loading-wave {
   animation: loading-wave 1s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
 }
 
 /* #poda:focus-within > .darkBorderBg::before {

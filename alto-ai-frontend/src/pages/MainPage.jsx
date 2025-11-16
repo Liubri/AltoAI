@@ -175,7 +175,7 @@ export default function MainPage() {
             />
           </div>
           {songs.length > 0 && (
-            <div className="flex w-full gap-8">
+            <div className="flex w-full gap-8 animate-fade-in">
               {/* Left Column: Playlist */}
               <div className="w-3/4 bg-secondary rounded-[1vh] shadow-md">
                 <Playlist
