@@ -47,11 +47,16 @@ export default function MainPage() {
       console.error("Error fetching playlist:", error);
     }
   }
-  
+
   async function deletePlaylistById(playlistID) {
     try {
       await api.delete(`/playlist/delete?id=${playlistID}`);
-      setPlaylistHistory(playlistHistory.filter(pl => pl.id !== playlistID));
+      setPlaylistHistory(playlistHistory.filter((pl) => pl.id !== playlistID));
+      if (playlistID === currentPlaylistId) {
+        setSongs([]);
+        setCurrentPlaylistId(null);
+        setPlaylistName("Alto-AI");
+      }
     } catch (error) {
       console.error("Error deleting playlist:", error);
     }
@@ -69,16 +74,37 @@ export default function MainPage() {
 
   async function sendInput(input, selected) {
     setIsLoading(true);
+    const hasExistingPlaylist = currentPlaylistId !== null;
+    // CASE 1: append songs → do NOT create a new playlist
+    if (selected === "specific" && hasExistingPlaylist) {
+      const req = await api.post("/playlist/song/add", {
+        playlistId: currentPlaylistId,
+        prompt: input,
+      });
+
+      setSongs(req.data);
+      setIsLoading(false);
+      return;
+    }
+
+    // CASE 2: NOT specific → create new playlist
     const req = await api.post("/spotify/createPlaylist", {
       prompt: input,
       mode: selected,
     });
-    setPlaylistHistory([{prompt: input, id: req.data.playlist_id, track_count: req.data.tracks.length, createdAt: new Date().toLocaleDateString(), title: req.data.title},...playlistHistory]);
     setSongs(req.data.tracks);
+    setPlaylistHistory((prev) => [
+      {
+        prompt: input,
+        id: req.data.playlist_id,
+        track_count: req.data.tracks.length,
+        createdAt: new Date().toLocaleDateString(),
+        title: req.data.title,
+      },
+      ...prev,
+    ]);
     setPlaylistName("Alto-AI");
-    console.log(req.data);
     setCurrentPlaylistId(req.data.playlist_id);
-    console.log("SetSongs: ", req.data);
     setIsLoading(false);
   }
 
@@ -118,11 +144,12 @@ export default function MainPage() {
   };
   return (
     <div className="flex relative">
-      <Sidebar isSidebarOpen={isSidebarOpen} 
-      getPlaylistById={fetchPlaylistById} 
-      history={playlistHistory}
-      deletePlaylistById={deletePlaylistById}
-      exportPlaylist={exportPlaylist}
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        getPlaylistById={fetchPlaylistById}
+        history={playlistHistory}
+        deletePlaylistById={deletePlaylistById}
+        exportPlaylist={exportPlaylist}
       />
       <div
         className={`flex-1 transition-all duration-300 ${
@@ -136,7 +163,7 @@ export default function MainPage() {
               className="!p-0 w-15 h-15 flex items-center outline-2 outline-transparent hover:outline-accent justify-center bg-quaternary border-gray-300 rounded-lg transition-all backdrop-blur-sm"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-            <HistoryIcon />
+              <HistoryIcon />
             </button>
           </div>
           <Header />

@@ -167,7 +167,7 @@ export async function checkValidSongs(user, playlist, mode) {
 export function parseSongsFromPrompt(prompt) {
   if (!prompt) return [];
   return prompt
-    .split(",")               // split by comma
+    .split(/,|，|\n/)               // split by comma
     .map((s) => s.trim())    // remove extra spaces
     .filter((s) => s.length > 0); // remove empty strings
 }

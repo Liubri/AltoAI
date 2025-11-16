@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 
 export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL, isPlaying, setIsPlaying}) {
@@ -46,7 +46,7 @@ export default function MusicPlayer({name, artist, imgURL, audioRef, previewURL,
       />
 
       <div className="text-center">
-        <h4 className="font-semibold truncate">{name}</h4>
+        <h4 className="font-semibold wrap-break-word">{name}</h4>
         <p className="text-sm text-quaternary">{artist}</p>
       </div>
 
