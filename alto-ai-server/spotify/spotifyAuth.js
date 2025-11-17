@@ -8,12 +8,12 @@ const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const SECRET_KEY = process.env.JWT_SECRET;  
-
+const BACKEND_URL = process.env.BACKEND_URL;
 
 // Step 1 — Redirect to Spotify login
 export function spotifyLogin(req, res) {
   const scope = "playlist-modify-public playlist-modify-private";
-  const REDIRECT_URL = `${req.protocol}://${req.get("host")}/callback`;
+  const REDIRECT_URL = `${BACKEND_URL}/callback`;
   const authUrl =
     "https://accounts.spotify.com/authorize?" +
     new URLSearchParams({
@@ -26,7 +26,7 @@ export function spotifyLogin(req, res) {
 }
 // Step 2 — Handle Spotify callback
 export async function spotifyCallback(req, res) {
-  const REDIRECT_URL = `${req.protocol}://${req.get("host")}/callback`;
+  const REDIRECT_URL = `${BACKEND_URL}/callback`;
   const code = req.query.code;
 
   try {
