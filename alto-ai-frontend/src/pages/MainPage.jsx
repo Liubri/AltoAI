@@ -11,6 +11,7 @@ import api from "../utils/api.js";
 import Sidebar from "../components/Sidebar";
 import { HistoryIcon } from "lucide-react";
 import { Nvidia, DeepSeek, OpenAI, Qwen } from "@lobehub/icons";
+import { useToast } from "../components/ToastContext";
 
 export default function MainPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -24,6 +25,7 @@ export default function MainPage() {
   const [playlistHistory, setPlaylistHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAI, setSelectedAI] = useState("nvidia");
+  const { showToast } = useToast();
 
   const options = [
     {
@@ -66,6 +68,7 @@ export default function MainPage() {
       );
     } catch (error) {
       console.error("Error deleting song:", error);
+      showToast("Failed to delete song.", "error");
     }
   }
 
@@ -91,6 +94,7 @@ export default function MainPage() {
       }
     } catch (error) {
       console.error("Error deleting playlist:", error);
+      showToast("Failed to delete playlist.", "error");
     }
   }
 
@@ -101,6 +105,7 @@ export default function MainPage() {
       playlist_id: idToUse,
       playlist_name: playlistName,
     });
+    showToast("Playlist exported to Spotify!", "success");
     setIsLoading(false);
   }
 
@@ -167,6 +172,7 @@ export default function MainPage() {
   if (!token) {
     console.log("FunctionCalled");
     console.log("✅ Login successful! Check console for tokens and user info.");
+    return <Navigate to="/" />;
   }
 
   const stats = {

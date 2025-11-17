@@ -35,11 +35,11 @@ app.get("/playlist/get", requireAuth(getPlaylistRoute));
 
 app.delete("/playlist/delete", requireAuth(deletePlaylistRoute));
 
-app.delete("/playlist/song/delete", requireAuth(deleteSongRoute))
+app.delete("/playlist/song/delete", requireAuth(deleteSongRoute));
 
-app.post("/playlist/song/add", requireAuth(addSongRoute))
+app.post("/playlist/song/add", requireAuth(addSongRoute));
 
-const PORT = 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://127.0.0.1:${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });
