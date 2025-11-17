@@ -1,4 +1,4 @@
-# 🎵 Alto-AI — AI-Powered Spotify Playlist Generator
+# 🎵 AltoAI — AI-Powered Spotify Playlist Generator
 
 Alto-AI is an intelligent playlist generator that transforms any text prompt into a curated Spotify playlist.  
 Describe a vibe, mood, scenario, or genre — Alto-AI generates a playlist and lets you export it directly to your Spotify account.
@@ -30,7 +30,7 @@ Describe a vibe, mood, scenario, or genre — Alto-AI generates a playlist and l
 - 💾 **Persistent User Sessions**  
   MongoDB stores user token data and optional playlist history.
 
----
+
 
 ## 🧰 Tech Stack
 
