@@ -106,11 +106,16 @@ async function addTrackToArray(user, playlist, mode) {
       let iteration = 0;
       while(needToAdd > 0 && iteration < 20){
         const track = takeRandom(results[i]);
-        // console.log("Selected Track: ", track.title ?? "artist", validTracks.map(t => t.title + " - " + t.artist));
-        if(track !== null && validTracks.filter(t => t.title === track.title && t.artist === track.artist).length === 0){
-          validTracks.push(track);
-          needToAdd -= 1;
+        if (!track || !track.title || !track.artist) {
+          iteration++;
+          continue; // skip invalid or undefined tracks
         }
+        // console.log("Selected Track: ", track.title ?? "artist", validTracks.map(t => t.title + " - " + t.artist));
+        if (validTracks.every(t => t.title !== track.title || t.artist !== track.artist)) {
+          validTracks.push(track);
+          needToAdd--;
+        }
+        iteration++;
       }
     }
     return validTracks;
